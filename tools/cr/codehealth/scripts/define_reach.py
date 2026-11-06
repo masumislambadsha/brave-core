@@ -104,12 +104,19 @@ class DefineReach:
                     words.update(cls._WORD.findall(line))
         return words
 
-    @staticmethod
-    def count(token: str, texts: list[str | None]) -> int:
-        """How often `token` occurs as a word in `texts`, missing ones left
-        out."""
+    # Comments and string literals, which the preprocessor doesn't rewrite.
+    _UNREACHED = re.compile(
+        r'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\\n])*"|\'(?:\\.|[^\'\\\n])*\'', re.S
+    )
+
+    @classmethod
+    def count(cls, token: str, texts: list[str | None]) -> int:
+        """How often `token` occurs as a word in the code of `texts`, missing
+        ones left out."""
         word = re.compile(rf'\b{re.escape(token)}\b')
-        return sum(len(word.findall(t)) for t in texts if t)
+        return sum(
+            len(word.findall(cls._UNREACHED.sub(' ', t))) for t in texts if t
+        )
 
     @staticmethod
     def upstream_files(override: str) -> list[str]:

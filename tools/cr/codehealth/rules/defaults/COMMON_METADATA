@@ -5,8 +5,8 @@ agentic_review {
   capability_groups {
     path_expression: ".*\\.(?:cc|h|mm)"
     exclude_path_expression: ".*(?:_unittest|_browsertest|_test|_uitest|_test_util|_test_utils|_fuzzer|_perftest)\\.(?:cc|h|mm)|.*/test/.*|.*/testing/.*|.*about_flags\\.cc"
-    content_patterns: "^-.*(?:FEATURE_(?:EN|DIS)ABLED_BY_DEFAULT|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
-    required_patterns: "^\\+.*(?:FEATURE_(?:EN|DIS)ABLED_BY_DEFAULT|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
+    content_patterns: "^-.*(?:FEATURE_(?:EN|DIS)ABLED_(?:BY_DEFAULT|FOR_COUNTRIES)|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
+    required_patterns: "^\\+.*(?:FEATURE_(?:EN|DIS)ABLED_(?:BY_DEFAULT|FOR_COUNTRIES)|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
     rules: "tools/cr/codehealth/rules/defaults/feature-flips.md"
     rules: "tools/cr/codehealth/rules/defaults/feature-defaults-unittest-entries.md"
     rules: "tools/cr/codehealth/rules/defaults/pins-equal-to-upstream-default.md"
@@ -134,8 +134,8 @@ agentic_review {
   capability_groups {
     path_expression: ".*(?:component|model|download|updater|deliver)\\w*\\.(?:cc|h)"
     exclude_path_expression: ".*(?:_unittest|_browsertest|_test|_uitest|_test_util|_test_utils|_fuzzer|_perftest)\\.(?:cc|h|mm)|.*/test/.*|.*/testing/.*"
-    content_patterns: "^-.*(?:FEATURE_(?:EN|DIS)ABLED_BY_DEFAULT|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
-    required_patterns: "^\\+.*(?:FEATURE_(?:EN|DIS)ABLED_BY_DEFAULT|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
+    content_patterns: "^-.*(?:FEATURE_(?:EN|DIS)ABLED_(?:BY_DEFAULT|FOR_COUNTRIES)|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
+    required_patterns: "^\\+.*(?:FEATURE_(?:EN|DIS)ABLED_(?:BY_DEFAULT|FOR_COUNTRIES)|\\b(?:ENABLED|DISABLED)\\);|enable_if\\()"
     rules: "tools/cr/codehealth/rules/defaults/component-updater-downloads.md"
   }
   # Origin trials and the Android Glic list.

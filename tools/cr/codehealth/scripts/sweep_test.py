@@ -169,6 +169,31 @@ class CapabilityGroupTest(unittest.TestCase):
             group.files(commit, FakeBrave()),
         )
 
+    def test_feature_flips_list_country_restricted_flips(self):
+        metadata = Path(__file__).parents[1] / 'rules/defaults/COMMON_METADATA'
+        flips = next(
+            group
+            for group in Metadata.parse(metadata.read_text())
+            if 'tools/cr/codehealth/rules/defaults/feature-flips.md'
+            in group.rules
+            and group.required_patterns
+        )
+        commit = Commit(
+            'abc',
+            's',
+            {
+                'components/sync/base/features.cc': [
+                    '-BASE_FEATURE(kA, base::FEATURE_DISABLED_BY_DEFAULT);',
+                    '+BASE_FEATURE_WITH_COUNTRY_RESTRICTIONS(kA,',
+                    '+    base::FEATURE_ENABLED_FOR_COUNTRIES,',
+                ],
+            },
+        )
+        self.assertEqual(
+            ['components/sync/base/features.cc'],
+            list(flips.files(commit, FakeBrave())),
+        )
+
     def test_brave_mentions_in_lines(self):
         group = CapabilityGroup(brave_mentions=r'(\w+)\s*\(')
         commit = Commit(
