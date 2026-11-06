@@ -169,6 +169,31 @@ class CapabilityGroupTest(unittest.TestCase):
             group.files(commit, FakeBrave()),
         )
 
+    def test_feature_flips_list_country_restricted_flips(self):
+        metadata = Path(__file__).parents[1] / 'rules/defaults/COMMON_METADATA'
+        flips = next(
+            group
+            for group in Metadata.parse(metadata.read_text())
+            if 'tools/cr/codehealth/rules/defaults/feature-flips.md'
+            in group.rules
+            and group.required_patterns
+        )
+        commit = Commit(
+            'abc',
+            's',
+            {
+                'components/sync/base/features.cc': [
+                    '-BASE_FEATURE(kA, base::FEATURE_DISABLED_BY_DEFAULT);',
+                    '+BASE_FEATURE_WITH_COUNTRY_RESTRICTIONS(kA,',
+                    '+    base::FEATURE_ENABLED_FOR_COUNTRIES,',
+                ],
+            },
+        )
+        self.assertEqual(
+            ['components/sync/base/features.cc'],
+            list(flips.files(commit, FakeBrave())),
+        )
+
     def test_brave_mentions_in_lines(self):
         group = CapabilityGroup(brave_mentions=r'(\w+)\s*\(')
         commit = Commit(
@@ -332,6 +357,35 @@ class RangeDumpTest(unittest.TestCase):
                 f'{sha} gone.txt:---- not a header',
             ],
             (out / 'changes').read_text(encoding='utf-8').splitlines(),
+        )
+
+    def test_dumps_a_range_that_changes_a_file_not_in_utf8(self):
+        (self.root / 'latin1.txt').write_bytes(b'caf\xe9\n')
+        self._git('add', 'latin1.txt')
+        self._git('commit', '-q', '-m', 'latin-1')
+        self._git('tag', 'newer')
+
+        def run_git(*args, **_):
+            # Decodes strictly, as `terminal.run_git` does.
+            return subprocess.run(
+                ['git', '-C', str(self.root), *args],
+                check=True,
+                capture_output=True,
+            ).stdout.decode('utf-8')
+
+        self.enterContext(
+            mock.patch.object(
+                sweep.repository,
+                'chromium',
+                SimpleNamespace(root=self.root, run_git=run_git),
+            )
+        )
+        out = self.root / 'dump'
+        out.mkdir()
+        RangeDump('old', 'newer', out).write_files()
+        self.assertIn('+caf�', (out / 'range.diff').read_text(encoding='utf-8'))
+        self.assertEqual(
+            2, len((out / 'subjects').read_text(encoding='utf-8').splitlines())
         )
 
 

@@ -70,6 +70,7 @@ import re
 import shlex
 import subprocess
 import sys
+import tempfile
 
 import _boot  # noqa: F401  -- adds tools/cr to sys.path
 from plaster import (  # noqa: E402  -- after _boot
@@ -400,18 +401,15 @@ class RangeDump:
     def write_files(self) -> None:
         """The dump files the review steps read: subjects, files, bodies, the
         range's diff, and each commit's changed lines (`changes`)."""
-        chromium = repository.chromium
         dumps = {
             'subjects': ['log', '--abbrev=12', '--format=%h %s'],
             'files': ['log', '--format=@@@ %h %s', '--name-only'],
             'bodies': ['log', '--format=@@@ %H%n%B'],
         }
         for name, args in dumps.items():
-            text = chromium.run_git(
-                *args, f'{self.old}..{self.new}', no_trim=True
-            )
+            text = self._git_text(*args, f'{self.old}..{self.new}')
             (self.out / name).write_text(text, encoding='utf-8', newline='')
-        diff = chromium.run_git('diff', '-U0', self.old, self.new, no_trim=True)
+        diff = self._git_text('diff', '-U0', self.old, self.new)
         (self.out / 'range.diff').write_text(diff, encoding='utf-8', newline='')
         # `<hash> <path>:<+/- line>` per changed line, so that a grep hit
         # names its commit, which `range.diff` can't.
@@ -422,6 +420,16 @@ class RangeDump:
                 for path, lines in commit.changes.items():
                     for line in lines:
                         file.write(f'{commit.sha[:12]} {path}:{line}\n')
+
+    @staticmethod
+    def _git_text(*args: str) -> str:
+        """Git's output, with what isn't UTF-8 replaced, as `commits()` reads
+        it: a range can change files in other encodings."""
+        return subprocess.run(
+            ['git', '-C', str(repository.chromium.root), *args],
+            check=True,
+            stdout=subprocess.PIPE,
+        ).stdout.decode('utf-8', errors='replace')
 
     def commits(self) -> Iterator[Commit]:
         """Each commit of the range, with its changed lines."""
@@ -681,7 +689,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('range', help='OLD..NEW Chromium tags.')
     parser.add_argument(
-        '--out', type=Path, help='Output directory; /tmp/codehealth_<NEW>.'
+        '--out',
+        type=Path,
+        help='Output directory; codehealth_<NEW> in the temp dir.',
     )
     parser.add_argument(
         '--sweep', action='append', help='Only this sweep (repeatable).'
@@ -690,7 +700,7 @@ def main() -> int:
     old, _, new = args.range.partition('..')
     if not old or not new:
         parser.error('expected OLD..NEW')
-    out = args.out or Path(f'/tmp/codehealth_{new}')
+    out = args.out or Path(tempfile.gettempdir()) / f'codehealth_{new}'
     out.mkdir(parents=True, exist_ok=True)
 
     dump = RangeDump(old, new, out)

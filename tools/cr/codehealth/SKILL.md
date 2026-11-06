@@ -32,9 +32,10 @@ of upstream code has missed a fix.
   commit it follows, and shows which patterns recur. A commit marked `[WIP]`
   isn't a fix yet: list what it leaves to verify as an item. Neither is a commit
   that drops a hook or a pin. After "Drop the X patch/override", grep that the
-  Brave function the hook called still has a caller. After "Drop the X pin",
-  read the commit that added the pin (`git log origin/master -S'<feature>'`) and
-  check that upstream's clean-up didn't keep the branch Brave avoided.
+  Brave function the hook called still has a caller, and grep Brave's tests for
+  one that asserts the dropped behaviour. After "Drop the X pin", read the
+  commit that added the pin (`git log origin/master -S'<feature>'`) and check
+  that upstream's clean-up didn't keep the branch Brave avoided.
 
 If the tracker already exists, update it (see
 [Updating a tracker](#updating-a-tracker)) rather than writing a new one.
@@ -78,7 +79,7 @@ a new directory per range: reusing one mixes a stale `claimed` file into step 3,
 and leaves candidate lists of rules removed since.
 
 ```sh
-A=<old tag>; B=<new tag>; D=/tmp/codehealth_$B
+A=<old tag>; B=<new tag>; D="${TMPDIR:-/tmp}/codehealth_$B"
 vpython3 tools/cr/codehealth/scripts/sweep.py $A..$B --out $D
 ```
 
@@ -116,7 +117,10 @@ not be allowed to write report files, so ask for the items and notes in the
 final reply as well. Don't start step 3 or write the tracker until every
 subagent has sent its final reply: a notice that it still has background work
 running is interim. Tell each subagent not to leave commands running in the
-background once it has replied.
+background once it has replied, and not to start subagents of its own: a sweep
+that splits its list that way can hand back before they report, and their
+results never reach the review. Split a large list (the overlap list) across
+subagents yourself.
 
 #### a. Overlap: commits touching what Brave overrides
 
