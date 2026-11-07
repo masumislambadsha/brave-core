@@ -16,9 +16,12 @@ namespace speech {
 
 // A locale that Brave's on-device speech recognition serves.
 struct BraveOnDeviceSpeechLocale {
-  // The canonical BCP 47 tag. The speech worker gets it as the language of a
-  // stream.
+  // The canonical BCP 47 tag. `available()` and `install()` record it for each
+  // origin, and the speech worker gets it as the language of a stream.
   std::string_view locale;
+  // Unique among the locales. SODA's code when SODA has one, otherwise a code
+  // that Brave adds to `LanguageCode`.
+  LanguageCode language_code;
 };
 
 // All the locales that Brave's on-device speech recognition serves.

@@ -7,6 +7,7 @@
 #define BRAVE_BROWSER_SPEECH_ON_DEVICE_SPEECH_LANGUAGES_H_
 
 #include <optional>
+#include <string_view>
 
 #include "brave/components/local_ai/core/on_device_speech_models_state.h"
 
@@ -19,6 +20,11 @@ struct BraveOnDeviceSpeechLocale;
 // model's locales while `kBraveOnDeviceSpeechMultilingual` is disabled.
 std::optional<local_ai::OnDeviceSpeechModel> GetOnDeviceSpeechModel(
     const BraveOnDeviceSpeechLocale& locale);
+
+// The model that transcribes the locale that serves `language`, a page's
+// BCP 47 tag, or nothing when no model does.
+std::optional<local_ai::OnDeviceSpeechModel> GetOnDeviceSpeechModelForLanguage(
+    std::string_view language);
 
 }  // namespace speech
 

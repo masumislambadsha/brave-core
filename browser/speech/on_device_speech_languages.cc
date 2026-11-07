@@ -28,4 +28,14 @@ std::optional<local_ai::OnDeviceSpeechModel> GetOnDeviceSpeechModel(
   return local_ai::OnDeviceSpeechModel::kMultilingual;
 }
 
+std::optional<local_ai::OnDeviceSpeechModel> GetOnDeviceSpeechModelForLanguage(
+    std::string_view language) {
+  const BraveOnDeviceSpeechLocale* locale =
+      ResolveBraveOnDeviceSpeechLocale(language);
+  if (!locale) {
+    return std::nullopt;
+  }
+  return GetOnDeviceSpeechModel(*locale);
+}
+
 }  // namespace speech

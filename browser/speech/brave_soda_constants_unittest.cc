@@ -24,13 +24,16 @@ std::optional<std::string_view> Resolve(std::string_view language) {
 
 }  // namespace
 
-// `ResolveBraveOnDeviceSpeechLocale` finds the row of a match by its tag.
+// `ResolveBraveOnDeviceSpeechLocale` finds the row of a match by its tag, and
+// `install()` records a locale by its name and settles it by its code.
 TEST(BraveSodaConstantsUnitTest, LocalesAreUniqueAndCanonical) {
   std::set<std::string_view> names;
+  std::set<LanguageCode> codes;
   for (const BraveOnDeviceSpeechLocale& locale :
        GetBraveOnDeviceSpeechLocales()) {
     SCOPED_TRACE(locale.locale);
     EXPECT_TRUE(names.insert(locale.locale).second);
+    EXPECT_TRUE(codes.insert(locale.language_code).second);
     std::optional<base::i18n::LanguageTag> tag =
         base::i18n::GetLanguageTagFromString(locale.locale);
     ASSERT_TRUE(tag);
@@ -54,6 +57,33 @@ TEST(BraveSodaConstantsUnitTest, RefusesTagsThatNoModelServes) {
        {"zh-CN", "zh-TW", "pl-PL", "nb-NO", "th-TH", "", "not a tag"}) {
     EXPECT_EQ(std::nullopt, Resolve(language)) << language;
   }
+}
+
+// The SODA lookup that `available()` and `install()` use. It gives the locale
+// both where SODA has a config for the locale's code and where it has none.
+TEST(BraveSodaConstantsUnitTest, SodaLookupGivesTheLocale) {
+  std::optional<SodaLanguagePackComponentConfig> german =
+      GetLanguageComponentConfigMatchingLanguageSubtag("de-AT");
+  ASSERT_TRUE(german);
+  EXPECT_EQ("de-DE", german->language_name);
+  EXPECT_EQ(LanguageCode::kDeDe, german->language_code);
+  std::optional<SodaLanguagePackComponentConfig> ukrainian =
+      GetLanguageComponentConfigMatchingLanguageSubtag("uk");
+  ASSERT_TRUE(ukrainian);
+  EXPECT_EQ("uk-UA", ukrainian->language_name);
+  EXPECT_EQ(LanguageCode::kUkUa, ukrainian->language_code);
+  EXPECT_FALSE(GetLanguageComponentConfigMatchingLanguageSubtag("zh-TW"));
+}
+
+TEST(BraveSodaConstantsUnitTest, NamesAndCodesRoundTrip) {
+  for (const BraveOnDeviceSpeechLocale& locale :
+       GetBraveOnDeviceSpeechLocales()) {
+    SCOPED_TRACE(locale.locale);
+    EXPECT_EQ(locale.language_code, GetLanguageCode(locale.locale));
+    EXPECT_EQ(locale.locale, GetLanguageName(locale.language_code));
+  }
+  // Other names still use SODA's table.
+  EXPECT_EQ(LanguageCode::kThTh, GetLanguageCode("th-TH"));
 }
 
 }  // namespace speech

@@ -27,24 +27,24 @@ namespace {
 // it. The matcher gives "fr" or "fr-BE" the first of two locales at the same
 // distance, so "fr-FR" must come before "fr-CA".
 constexpr auto kLocales = std::to_array<BraveOnDeviceSpeechLocale>({
-    {"en-US"},
-    {"ar"},
-    {"de-DE"},
-    {"es-ES"},
-    {"es-US"},
-    {"fr-FR"},
-    {"fr-CA"},
-    {"hi-IN"},
-    {"it-IT"},
-    {"ja-JP"},
-    {"ko-KR"},
-    {"nl-NL"},
-    {"pt-BR"},
-    {"pt-PT"},
-    {"ru-RU"},
-    {"tr-TR"},
-    {"uk-UA"},
-    {"vi-VN"},
+    {"en-US", LanguageCode::kEnUs},
+    {"ar", LanguageCode::kAr},
+    {"de-DE", LanguageCode::kDeDe},
+    {"es-ES", LanguageCode::kEsEs},
+    {"es-US", LanguageCode::kEsUs},
+    {"fr-FR", LanguageCode::kFrFr},
+    {"fr-CA", LanguageCode::kFrCa},
+    {"hi-IN", LanguageCode::kHiIn},
+    {"it-IT", LanguageCode::kItIt},
+    {"ja-JP", LanguageCode::kJaJp},
+    {"ko-KR", LanguageCode::kKoKr},
+    {"nl-NL", LanguageCode::kNlNl},
+    {"pt-BR", LanguageCode::kPtBr},
+    {"pt-PT", LanguageCode::kPtPt},
+    {"ru-RU", LanguageCode::kRuRu},
+    {"tr-TR", LanguageCode::kTrTr},
+    {"uk-UA", LanguageCode::kUkUa},
+    {"vi-VN", LanguageCode::kViVn},
 });
 
 // Matches a page's tag against the locales. A region can select a locale that
@@ -76,6 +76,14 @@ const BraveOnDeviceSpeechLocale* FindBraveOnDeviceSpeechLocaleByName(
   return it != kLocales.end() ? &*it : nullptr;
 }
 
+// The locale whose code is `language_code`, or null.
+const BraveOnDeviceSpeechLocale* FindBraveOnDeviceSpeechLocaleByCode(
+    LanguageCode language_code) {
+  auto it = std::ranges::find(kLocales, language_code,
+                              &BraveOnDeviceSpeechLocale::language_code);
+  return it != kLocales.end() ? &*it : nullptr;
+}
+
 }  // namespace
 
 base::span<const BraveOnDeviceSpeechLocale> GetBraveOnDeviceSpeechLocales() {
@@ -93,6 +101,37 @@ const BraveOnDeviceSpeechLocale* ResolveBraveOnDeviceSpeechLocale(
   return match ? FindBraveOnDeviceSpeechLocaleByName(match->tag_string())
                : nullptr;
 }
+
+// The functions in this namespace are file-local. The plaster changes to the
+// upstream source below call them, because that source is in this file.
+namespace {
+
+// The SODA language config that stands for the locale that serves `language`,
+// or none when no locale does. Its name is the locale's tag and its code is the
+// locale's code.
+std::optional<SodaLanguagePackComponentConfig>
+GetBraveOnDeviceSpeechLanguageConfig(std::string_view language) {
+  const BraveOnDeviceSpeechLocale* locale =
+      ResolveBraveOnDeviceSpeechLocale(language);
+  if (!locale) {
+    return std::nullopt;
+  }
+  // SODA's own config, where SODA has one for the code, keeps its pref names
+  // and key. Only SODA's own install code reads them, and Brave does not run
+  // it, so a config without them is safe too.
+  std::optional<SodaLanguagePackComponentConfig> config =
+      GetLanguageComponentConfig(locale->language_code);
+  if (!config) {
+    return SodaLanguagePackComponentConfig{
+        .language_code = locale->language_code,
+        .language_name = locale->locale,
+    };
+  }
+  config->language_name = locale->locale;
+  return config;
+}
+
+}  // namespace
 
 }  // namespace speech
 
