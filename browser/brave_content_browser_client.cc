@@ -1230,6 +1230,12 @@ BraveContentBrowserClient::CreateURLLoaderThrottles(
   }
 #endif  // BUILDFLAG(ENABLE_LOCAL_AI)
 
+  // TopChromeWebUIProfile lacks the prefs and keyed services the throttles
+  // below depend on.
+  if (Profile::FromBrowserContext(browser_context)->IsTopChromeWebUIProfile()) {
+    return result;
+  }
+
   content::WebContents* contents = wc_getter.Run();
 
   if (contents) {
@@ -1619,6 +1625,15 @@ bool BraveContentBrowserClient::HandleURLOverrideRewrite(
 
 void BraveContentBrowserClient::CreateThrottlesForNavigation(
     content::NavigationThrottleRegistry& registry) {
+  // TopChromeWebUIProfile only hosts top-chrome WebUIs, and lacks the prefs and
+  // keyed services Brave's throttles depend on.
+  if (Profile::FromBrowserContext(
+          registry.GetNavigationHandle().GetWebContents()->GetBrowserContext())
+          ->IsTopChromeWebUIProfile()) {
+    ChromeContentBrowserClient::CreateThrottlesForNavigation(registry);
+    return;
+  }
+
 #if BUILDFLAG(ENABLE_BRAVE_REWARDS)
   // inserting the navigation throttle at the fist position before any java
   // navigation happens
