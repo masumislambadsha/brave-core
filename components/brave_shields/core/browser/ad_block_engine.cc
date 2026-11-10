@@ -55,6 +55,7 @@ std::string_view RequestTypeToString(
     case AdBlockRequestType::kUnknown:
       return "";
   }
+  NOTREACHED();
 }
 
 }  // namespace
