@@ -696,7 +696,7 @@
 -SadTabHelperBrowserTest.NoStatePrefetchEvictedForMemory_DoesNotCrash
 -SafetyTipPageInfoBubbleViewBrowserTest.MetricsOnlyHeuristicDoesntShowInPageInfo
 -SafetyTipPageInfoBubbleViewPrerenderBrowserTest.*
--SearchEngineTabHelperPrerenderingFormSubmissionBrowserTest.GenerateKeywordAfterPrerenderActivation
+-SearchEngineTabHelperPrerenderingBrowserTest.GenerateKeywordAfterPrerenderActivation
 -SecurityStatePageLoadMetricsPrerenderBrowserTest.*
 -SecurityStateTabHelperPrerenderTest.*
 -ServiceWorker/DeclarativeNetRequestApiPrerenderingTest.*
@@ -1053,6 +1053,7 @@
 # IsLoadingPredictorEnabled() always returns false.
 -All/SearchEnginePreconnectorInitialRttBrowserTest.*
 -All/SearchEnginePreconnectorInvalidKeepAliveTimeoutsBrowserTest.*
+-All/SearchEnginePreconnectorPriorityBoostBrowserTest.*
 -All/SearchEnginePreconnectorWithAdjustPreconnectRetryIntervalFeatureBrowserTest.CalculateBackoffMultiplier/*
 -AnchorElementSetIsNavigationInDomainBrowserTest.TestPointerDownOnAnchor
 -Flags/LCPPTimingPredictorBrowserFlagTest.WithKCriticalPathFlag/*
@@ -1288,6 +1289,7 @@
 -All/AvatarToolbarButtonGradientRingBrowserTest.*/*
 -All/AvatarToolbarButtonPasskeyUnlockErrorBrowserTest.PasskeyUnlockError/*
 -All/AvatarToolbarButtonSignInBenefitsNewSigninIphParameterizedTest.NotShownIfLegacyWasShown/*
+-All/AvatarToolbarButtonWebAppBrowserTest.*
 -All/AvatarToolbarButtonWithSyncBrowserTest.*
 -All/BrowserCommandControllerBrowserTestShowSigninWhenPaused.ExecuteShowSigninWhenPaused/ReplaceSyncPromosDisabled
 -All/BrowserCommandControllerBrowserTestShowSigninWhenPaused.ExecuteShowSigninWhenPaused/ReplaceSyncPromosEnabled
@@ -1315,6 +1317,7 @@
 -AvatarToolbarButtonSignedOutPromoBrowserTest.SignedOutPromoTriggeredOnStartup
 -AvatarToolbarButtonSignedOutPromoOverriddenIdentityManagerBrowserTest.SignedOutPromoTrigger*
 -AvatarToolbarButtonSignInBenefits*BrowserTest.*
+-AvatarToolbarButtonViewsOverflowBrowserTest.*
 -BookmarkBubbleViewMigrationBrowserTest.SyncPromoSignedIn
 -BookmarkBubbleViewShoppingCollectionBrowserTest.*
 -BookmarkEditorViewBrowserTestWithAccountBookmarks.InvokeUi_AccountAndLocalNodes
@@ -1345,6 +1348,7 @@
 -EnterpriseSigninServiceTest.DoesNothingIfPolicyNotSet
 -EnterpriseSigninServiceTest.OpensNewTabOnSyncPaused
 -ForceSigninProfilePickerCreationFlowBrowserTest.ForceSignin*
+-ForeignTabsPageHandlerCloseMetricsBrowserTest.ShowCrossDeviceSignInPromoRecordsOrganizerCloseAction
 -ForeignTabsPageHandlerPromoBrowserTest.ShowCrossDeviceSignInPromo
 -GaiaRemoteConsentFlowParamBrowserTest.*
 -GlicActuationOnWebPolicyTest.*
@@ -1523,6 +1527,7 @@
 -ClientSideDetectionServiceBaseTest.*
 -ClientSideDetectionServiceBrowserTest.*
 -ExtensionTelemetryServiceBrowserTest.*
+-ExtensionTelemetryServiceIsolatedModeBrowserTest.*
 -GeminiAntiscamProtectionServiceBrowserTest.*
 -NoStatePrefetchBrowserTestWithEsbBlockV8.ServiceWorkerInterceptWithEsb
 -ProfileNetworkContextServiceCacheResetSameBackendBrowserTest.TestCacheResetOnUpgradeMultiPartition
@@ -1977,7 +1982,7 @@
 -UnframedTest.*
 -WebAppInternalsIwaInstallationBrowserTest.*
 -WebAppManagedConfigurationPolicyUITest.IwaManagedConfigurationTable*
--WebAppMenuBrowserTest.InvokeUi_main_isolated
+-All/WebAppMenuBrowserTest.InvokeUi_main_isolated/*
 -WebAppTagIsolatedWebApp*.*
 -WebAppUninstallDialogViewIwaBrowserTest.*
 -WebAuthnAffiliationCheck/WebAuthnIWARemoteDesktopOverrideBrowserTest.IWAsPolicyAndPrefsSetDifferentRp_id/Affiliated
@@ -1995,7 +2000,7 @@
 -ChromeFileSystemAccessPermissionContextParentWriteRequiredBrowserTest.Rename_NoParentWriteAccessFails
 -ChromeFileSystemAccessPermissionContextRevokeAndRestoreBrowserTest.*
 -All/DocumentPipTuckingBrowserTest.FilePickerTucksAndRestoresWindow/*
--DocumentPictureInPictureWindowControllerTuckingBrowserTest.TuckOnOpenFilePicker
+-All/DocumentPictureInPictureWindowControllerTuckingBrowserTest.TuckOnOpenFilePicker/*
 -FileSystemAccessBrowserSlowLoadTest.*
 -FileSystemAccessBrowserTest.SafeBrowsing
 -FileSystemAccessBrowserTestForWebUI.*
@@ -2025,6 +2030,7 @@
 -PageContentCacheSessionRestoreTest.*
 -PageContextMonitorBrowserTest.*
 -ToolControllerBrowserTest.*
+-ToolControllerGetPointerBrowserTest.*
 -ToolControllerNavigationGatingBrowserTest.*
 -ToolControllerSkipObservationDelayBrowserTest.*
 -ToolControllerWindowToolsBrowserTest.*
@@ -2224,7 +2230,9 @@
 -PreloadingModelKeyedServiceTest.Score
 
 # These tests fail because they hardcode "Incognito" in the expected window
-# title whereas we use "Private"
+# title or menu search synonym whereas we use "Private"
+-ActionAppMenuIsolatedModeSynonymSearchBrowserTest.SearchMatchesIsolatedWindowSynonym
+-All/ActionAppMenuSynonymSearchBrowserTest.SearchMatchesActionSynonym/8
 -All/WebInstallNotSupportedDialogBrowserTest.NotSupportedDialogInIncognito_BackgroundDocument/*
 -All/WebInstallNotSupportedDialogBrowserTest.NotSupportedDialogInIncognito_CurrentDocument/*
 -BrowserViewTest.AccessibleWindowTitleIncognito
@@ -2396,7 +2404,7 @@
 # https://issues.chromium.org/issues/476255536 is resolved.
 -ProcessesApiTest.OnUpdatedWithMemoryRefreshTypes
 
-# This test fails because we don't currently include the GLIC sidepanel where
+# These tests fail because we don't currently include the GLIC sidepanel where
 # this functionality appears or is tested
 -All/GlicActorContextFetchFunctionalBrowserTest.*/*
 -All/GlicActorPageContextMetricsFunctionalBrowserTest.*/*
@@ -2420,6 +2428,8 @@
 -GlicZoomBrowserTest.ZoomScroll*
 -NewGlicApi*.*
 -PdfViewerPrivateBrowserTestGlicEnabled.GlicSummarize
+-SelectionOverlayBrowserTest.ClosesLensWhenOpened
+-SelectionOverlayBrowserTest.ClosesWhenLensOpened
 -SelectionOverlayBrowserTest.SelectionUsedFromController
 -SharedGlicBrowserTest.FocusTrappingGuestPanel
 -SkillsApiFunctionalBrowserTest.*
@@ -2433,6 +2443,12 @@
 # PDF Viewer vs Chrome PDF Viewer).
 -All/SubframeTaskPDFBrowserTest.TaskManagerShowsIncognitoPDFSubframeTask/1
 -All/SubframeTaskPDFBrowserTest.TaskManagerShowsPDFSubframeTask/1
+
+# These tests fail because we disable kPdfSaveToDrive, so the PDF viewer has no
+# Save to Drive bubble.
+-All/SaveToDriveEventDispatcherBrowserTest.GetFileMetadataStringForUploadInProgress/*
+-All/SaveToDriveEventDispatcherBrowserTest.GetFileMetadataStringForUploadNotStarted/*
+-All/SaveToDriveEventDispatcherBrowserTest.Notify/*
 
 # These tests fail because they override search engines list and when our code
 # attempts to set Brave Search as the engine for the private window it can't
@@ -2457,6 +2473,7 @@
 
 # These tests fail because they try to toggle Glic UI via toolbar button which
 # we don't have.
+-All/ToolbarViewGlicAvatarCrashTest.ShowAndHideGlicActorTaskIcon/*
 -GlicActor*BrowserTest*.*
 
 # Flaky: the simulated mouse-down that starts the drag times out (Windows CI,
@@ -2757,6 +2774,7 @@
 -All/SplitTabViewTest.AdjacentTabsTargetableInHorizontalOverlapRegion/Horizontal
 -HorizontalTabGroupViewBrowserTest.TabAfterGroupIsTargetableInOverlapRegion
 -HorizontalTabStripViewLayoutBrowserTest.NewTabButtonSpacingMatchesTabStripPadding
+-HorizontalTabStripViewLayoutBrowserTest.ScrollToFitViewsAccountsForPostScrollOverflowIndicator
 -HorizontalTabViewTest.DiscardIndicatorResponsiveness
 -HorizontalTabViewTest.ExtraAlertPaddingNotShownOnSmallActiveTab
 -HorizontalTabViewTest.HitTest

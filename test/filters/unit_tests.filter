@@ -245,8 +245,9 @@
 # returns true whenever ThemeService::GetIsBaseline() is true (we replace the
 # baseline palette with grayscale), so key.user_color_source resolves to
 # kGrayscale instead of the kBaseline the tests expect for the non-system,
-# non-device-theme cases, and DevTools' userColorSource is "baseline-grayscale"
-# instead of "baseline-default".
+# non-device-theme cases, DevTools' userColorSource is "baseline-grayscale"
+# instead of "baseline-default", and the theme source tests' assertion that the
+# baseline theme isn't grayscale fails.
 -ColorProviderTest.SystemThemeUsesNativeUserColor/Dark
 -ColorProviderTest.SystemThemeUsesNativeUserColor/DarkCacheThemePrefs
 -ColorProviderTest.SystemThemeUsesNativeUserColor/DarkHighContrast
@@ -265,6 +266,8 @@
 -DevToolsUIBindingsThemeTest.OffTheRecordBindingsNotifyOriginalProfileThemeChanges
 -DevToolsUIBindingsThemeTest.OnThemeChangedDirectCallSendsSource
 -DevToolsUIBindingsThemeTest.ThemeServiceTransitionsNotifyColorThemeChanged
+-ThemeColorsSourceManagerTest.PopulateLocalResourceLoaderConfig_BaselineAndGrayscaleOmitUserColorSource
+-WebUISourcesTest.ThemeSourceServesColorsCssAcrossSchemesAndThemes
 
 # These tests fail because we disable kFirstPartySets.
 -DefaultFirstPartySetsPolicyServiceTest.*
@@ -484,6 +487,16 @@
 -ChromePingManagerFactoryTest.ShouldFetchAccessTokenForReport_Yes
 -ChromePingManagerFactoryTest.ShouldSendPersistedReport_Yes
 -ChromeTailoredSecurityServiceTest.*
+-ClientSideDetectionHostCopyFromSurfaceTest.EmbeddingCaptureSupersedesParkedClassification
+-ClientSideDetectionHostCopyFromSurfaceTest.FailuresUseUpgradedRequestTypeForEnhancedProtection
+-ClientSideDetectionHostCopyFromSurfaceTest.HigherTierRequestSupersedesParkedImageEmbeddingCapture
+-ClientSideDetectionHostCopyFromSurfaceTest.LowerTierTriggerBlockedWhileEmbeddingCapturePending
+-ClientSideDetectionHostCopyFromSurfaceTest.NewRequestCancelsPendingClassification
+-ClientSideDetectionHostCopyFromSurfaceTest.NewRequestCancelsRunningClassifier
+-ClientSideDetectionHostCopyFromSurfaceTest.PhishyClassificationReusesCaptureForImageEmbedding
+-ClientSideDetectionHostCopyFromSurfaceTest.RenderProcessGoneResetsBrowserSideClassificationState
+-ClientSideDetectionHostCopyFromSurfaceTest.SkippedClassificationCapturesForImageEmbedding
+-ClientSideDetectionHostCopyFromSurfaceTest.SkippedScoringPreemptsRunningClassifier
 -ClientSideDetectionHostCreditCardFormTest.*
 -ClientSideDetectionHostKeyboardLockUniformImageDelayTest.*
 -ClientSideDetectionHostNewObserversForceRequestTest.*
@@ -930,6 +943,7 @@
 -WebuiOmniboxHandlerTest.OpenLensSearch
 -WebuiOmniboxHandlerTest.OpenPopupSelection_CtrlEnterWithMatch
 -WebuiOmniboxHandlerTest.OpenPopupSelection_CtrlEnterWithNoMatch
+-WebuiOmniboxHandlerTest.OpenPopupSelection_RespectsModifiers
 
 # These tests crash because the tests initialize profile first and then reset
 # the global features. The ephemeral_storage::ApplicationStateObserver created
@@ -1041,6 +1055,17 @@
 # match.
 -ActionAppMenuTest.HeaderAndMenuItemBorderLayout
 
+# These tests fail because they expect Chrome's app menu search placeholder,
+# which reads "Search Brave features and actions" with Brave's strings.
+-ActionAppMenuWithSearchTest.SearchBarEnabledWithFeatureFlag
+-AppMenuSearchBarViewTest.InitialProperties
+
+# This test fails because Brave's page actions, added by the plasters in
+# rewrite/chrome/browser/ui/page_action/action_ids.h.yaml and
+# page_action_properties_provider.cc.yaml, have no PageActionType variant in
+# upstream's page/histograms.xml.
+-PageActionPropertiesProviderTest.HistogramNamesMatchVariants
+
 # These tests expect a LoadingPredictor, which never exists now that
 # IsLoadingPredictorEnabled() always returns false.
 -All/NoStatePrefetchFallbackToPreconnectTest.LinkRelPrerender/*
@@ -1097,6 +1122,10 @@
 
 # This test fails because we disable kSegmentationPlatformFeature
 -SegmentationPlatformServiceFactoryTest.TestTipsNotificationsRanker
+
+# This test fails because Brave's GCM driver doesn't start until the user
+# enables GCM, so the InstanceID it expects to reload was never stored.
+-ExtensionGCMAppHandlerTest.RemoveInstanceIDOnExtensionUnload
 
 # Tests below this point have not been diagnosed or had issues created yet.
 -AboutFlagsHistogramTest.*
