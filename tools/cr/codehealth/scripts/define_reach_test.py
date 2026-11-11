@@ -149,6 +149,10 @@ class RunTest(unittest.TestCase):
             [Reach('a/b.h', 'Old', 2, 0)], DefineReach('old', 'new').run()
         )
 
+    def test_refuses_a_missing_tag(self) -> None:
+        with self.assertRaisesRegex(LookupError, 'unfetched'):
+            DefineReach('unfetched', 'new').run()
+
     def test_skips_dead_tokens_a_patch_adds(self) -> None:
         brave = define_reach.repository.brave.root
         self._write(

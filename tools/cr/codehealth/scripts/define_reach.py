@@ -129,7 +129,23 @@ class DefineReach:
 
     def run(self) -> list[Reach]:
         """The defines whose reach changed, or that reach nothing; dead ones
-        first."""
+        first. Raises `LookupError` for a tag the checkout lacks, which would
+        otherwise read as every file missing."""
+        for tag in (self._old, self._new):
+            if subprocess.run(
+                [
+                    'git',
+                    '-C',
+                    str(repository.chromium.root),
+                    'rev-parse',
+                    '--verify',
+                    '--quiet',
+                    f'{tag}^{{commit}}',
+                ],
+                capture_output=True,
+                check=False,
+            ).returncode:
+                raise LookupError(f'{tag} is not in the Chromium checkout')
         brave = repository.brave.root
         chromium_src = brave / 'chromium_src'
         overrides = {}
@@ -215,7 +231,11 @@ def main() -> int:
     old, _, new = args.range.partition('..')
     if not old or not new:
         parser.error('expected OLD..NEW')
-    changed = DefineReach(old, new).run()
+    try:
+        changed = DefineReach(old, new).run()
+    except LookupError as e:
+        print(f'error: {e}', file=sys.stderr)
+        return 1
     print(f'old -> new token  override ({len(changed)} changed; 0 = dead)')
     for reach in changed:
         print(reach)

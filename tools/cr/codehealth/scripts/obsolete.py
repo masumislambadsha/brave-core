@@ -44,6 +44,7 @@ import tempfile
 
 import _boot  # noqa: F401  -- adds tools/cr to sys.path
 import repository  # noqa: E402  -- after _boot
+import versioning  # noqa: E402  -- after _boot
 
 # Brave paths whose words aren't Brave using upstream names: vendored code,
 # and patches and plasters, whose context the rebase regenerates.
@@ -1223,7 +1224,10 @@ class LiftOverrides:
         commits."""
         brave = self._range.brave
         head = brave.ref or 'HEAD'
-        span = f'{self._base(head)}...{head}'
+        # Where the lift's own commits start, as `brockit rebase` finds it: a
+        # merge-base falls back past the base's commits once the base is
+        # rewritten.
+        span = f'{versioning.branch_start(head, self._base(head))}..{head}'
         lines = [
             f'added\t{path}'
             for path in brave.run(

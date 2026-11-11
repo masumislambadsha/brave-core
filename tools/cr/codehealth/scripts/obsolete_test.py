@@ -15,6 +15,7 @@ import tempfile
 import unittest
 from unittest import mock
 
+import obsolete
 from obsolete import (
     CitedBugs,
     Git,
@@ -793,6 +794,15 @@ class RemovedNamesTest(unittest.TestCase):
 
 
 class LiftOverridesTest(unittest.TestCase):
+    def setUp(self):
+        self.start = self.enterContext(
+            mock.patch.object(
+                obsolete.versioning,
+                'branch_start',
+                side_effect=lambda ref, on: f'start-on-{on}',
+            )
+        )
+
     def test_overrides_the_range_does_not_touch_are_counted(self):
         brave = FakeGit(log='chromium_src/a.cc\nchromium_src/b.cc\n')
         overrides = LiftOverrides(FakeRange(brave))
@@ -811,7 +821,7 @@ class LiftOverridesTest(unittest.TestCase):
                 overrides.run(),
             )
 
-    def test_diffs_from_the_branch_upstream(self):
+    def test_diffs_from_where_the_branch_starts_on_its_upstream(self):
         class UpstreamGit(FakeGit):
             def __init__(self, upstream):
                 super().__init__()
@@ -823,7 +833,7 @@ class LiftOverridesTest(unittest.TestCase):
                     if self.upstream is None:
                         raise subprocess.CalledProcessError(128, args)
                     return f'{self.upstream}\n'
-                self.spans += [a for a in args if '...' in a]
+                self.spans += [a for a in args if '..' in a]
                 return ''
 
         for upstream, base in (
@@ -832,7 +842,8 @@ class LiftOverridesTest(unittest.TestCase):
         ):
             brave = UpstreamGit(upstream)
             LiftOverrides(FakeRange(brave)).run()
-            self.assertEqual([f'{base}...HEAD'] * 2, brave.spans)
+            self.start.assert_called_with('HEAD', base)
+            self.assertEqual([f'start-on-{base}..HEAD'] * 2, brave.spans)
 
 
 if __name__ == '__main__':
