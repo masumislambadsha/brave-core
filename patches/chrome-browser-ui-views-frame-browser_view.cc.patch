@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/frame/browser_view.cc b/chrome/browser/ui/views/frame/browser_view.cc
-index 52141b2abc7b2b14d21469cd2f288e765e1a2f21..16d608d6ae13b7d3da3786832fdc6ef00bb3abc7 100644
+index 0dabb7764594611945a317120e64a8cfa50f2751..69651461622f7b9299c1a26df27d3ff23f078e29 100644
 --- a/chrome/browser/ui/views/frame/browser_view.cc
 +++ b/chrome/browser/ui/views/frame/browser_view.cc
 @@ -778,6 +778,9 @@ class BrowserView::ExclusiveAccessContextImpl
@@ -40,7 +40,7 @@ index 52141b2abc7b2b14d21469cd2f288e765e1a2f21..16d608d6ae13b7d3da3786832fdc6ef0
  
    // This frames some/all of the top container plus infobars, contents, and
    // contents-height side panel when the toolbar-height side panel is visible.
-@@ -2051,6 +2054,16 @@ void BrowserView::OnActiveTabChanged(content::WebContents* old_contents,
+@@ -2062,6 +2065,16 @@ void BrowserView::OnActiveTabChanged(content::WebContents* old_contents,
  #else
    will_restore_focus &= GetWidget()->IsActive();
  #endif
@@ -57,7 +57,7 @@ index 52141b2abc7b2b14d21469cd2f288e765e1a2f21..16d608d6ae13b7d3da3786832fdc6ef0
    // Update various elements that are interested in knowing the current
    // WebContents.
  
-@@ -5405,7 +5418,7 @@ bool BrowserView::MaybeShowBookmarkBar(WebContents* contents) {
+@@ -5458,7 +5471,7 @@ bool BrowserView::MaybeShowBookmarkBar(WebContents* contents) {
    }
  
    if (!bookmark_bar_view_) {
