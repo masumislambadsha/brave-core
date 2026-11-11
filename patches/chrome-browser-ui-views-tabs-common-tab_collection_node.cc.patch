@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/tabs/common/tab_collection_node.cc b/chrome/browser/ui/views/tabs/common/tab_collection_node.cc
-index 0d651c18cf0a348fe63eb4ce322a2ceb8125e065..d0b0e8ace610c912fd875d47ee603569bde655eb 100644
+index cc043a901e8eb2aa144184e6951ed306e1a621e9..fc110e35917d9a107d826408527fbb91d01721e1 100644
 --- a/chrome/browser/ui/views/tabs/common/tab_collection_node.cc
 +++ b/chrome/browser/ui/views/tabs/common/tab_collection_node.cc
-@@ -28,6 +28,8 @@ TabCollectionNode::Type GetTypeFromNode(tabs::ConstChildPtr node_data_) {
+@@ -30,6 +30,8 @@ TabCollectionNode::Type GetTypeFromNode(tabs::ConstChildPtr node_data_) {
            node_data_)) {
      switch (std::get<tabs::ConstDanglingUntriagedTabCollection>(node_data_)
                  ->type()) {
@@ -11,12 +11,12 @@ index 0d651c18cf0a348fe63eb4ce322a2ceb8125e065..d0b0e8ace610c912fd875d47ee603569
        case tabs::TabCollection::Type::TABSTRIP:
          return TabCollectionNode::Type::TABSTRIP;
        case tabs::TabCollection::Type::PINNED:
-@@ -76,6 +78,8 @@ tabs::TabCollectionNodeHandle GetHandleFromNode(tabs::ConstChildPtr node_data) {
+@@ -78,6 +80,8 @@ tabs::TabCollectionNodeHandle GetHandleFromNode(tabs::ConstChildPtr node_data) {
  std::unique_ptr<views::View> TabCollectionNode::CreateViewForNode(
      TabCollectionNode* node_for_view) {
    switch (node_for_view->type()) {
 +    case Type::TREE_NODE:
 +      NOTREACHED();
      case Type::TABSTRIP:
-       return std::make_unique<TabStripView>(node_for_view);
-     case Type::PINNED:
+       return std::make_unique<TabStripView>(
+           static_cast<RootTabCollectionNode*>(node_for_view));
