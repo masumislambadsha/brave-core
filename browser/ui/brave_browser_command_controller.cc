@@ -197,6 +197,11 @@ void BraveBrowserCommandController::OnTabPinnedStateChanged(
   UpdateCommandsForPin();
 }
 
+void BraveBrowserCommandController::OnTabAudioChanged(tabs::TabInterface* tab) {
+  BrowserCommandController::OnTabAudioChanged(tab);
+  UpdateCommandsForMute();
+}
+
 void BraveBrowserCommandController::OnTabStripModelChanged(
     TabStripModel* tab_strip_model,
     const TabStripModelChange& change,
@@ -211,6 +216,7 @@ void BraveBrowserCommandController::OnTabStripModelChanged(
   UpdateCommandEnabled(IDC_CLOSE_ALL_DUPLICATE_TABS,
                        brave::HasAnyDuplicateTabs(&*browser_));
   UpdateCommandsForTabs();
+  UpdateCommandsForMute();
   UpdateCommandsForSend();
   UpdateCommandsForPin();
   UpdateCommandForBlockElements();
@@ -425,6 +431,7 @@ void BraveBrowserCommandController::InitBraveCommandState() {
   UpdateCommandEnabled(IDC_BRAVE_SEND_TAB_TO_SELF, true);
 
   UpdateCommandsForTabs();
+  UpdateCommandsForMute();
   UpdateCommandsForSend();
   UpdateCommandsForPin();
 
@@ -580,14 +587,16 @@ void BraveBrowserCommandController::UpdateCommandForWaybackMachine() {
 #endif
 }
 
-void BraveBrowserCommandController::UpdateCommandsForTabs() {
+void BraveBrowserCommandController::UpdateCommandsForMute() {
   UpdateCommandEnabled(IDC_WINDOW_MUTE_ALL_TABS,
                        brave::CanMuteAllTabs(&*browser_, false));
   UpdateCommandEnabled(IDC_WINDOW_MUTE_OTHER_TABS,
                        brave::CanMuteAllTabs(&*browser_, true));
   UpdateCommandEnabled(IDC_WINDOW_UNMUTE_ALL_TABS,
                        brave::CanUnmuteAllTabs(&*browser_));
+}
 
+void BraveBrowserCommandController::UpdateCommandsForTabs() {
   UpdateCommandEnabled(IDC_GROUP_TABS_ON_CURRENT_ORIGIN, true);
   UpdateCommandEnabled(IDC_MOVE_GROUP_TO_NEW_WINDOW, true);
 

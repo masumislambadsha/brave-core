@@ -60,6 +60,7 @@ class BraveBrowserCommandController : public chrome::BrowserCommandController
   void OnTabChangedAt(tabs::TabInterface* tab,
                       TabChangeType change_type) override;
   void OnTabPinnedStateChanged(tabs::TabHandle tab) override;
+  void OnTabAudioChanged(tabs::TabInterface* tab) override;
   void OnTabStripModelChanged(
       TabStripModel* tab_strip_model,
       const TabStripModelChange& change,
@@ -108,6 +109,7 @@ class BraveBrowserCommandController : public chrome::BrowserCommandController
   void UpdateCommandForPlaylist();
   void UpdateCommandForWaybackMachine();
   void UpdateCommandsForTabs();
+  void UpdateCommandsForMute();
   void UpdateCommandsForSend();
   // Enables IDC_BLOCK_ELEMENTS only when the active tab is an http(s) page,
   // where the element picker can run.
