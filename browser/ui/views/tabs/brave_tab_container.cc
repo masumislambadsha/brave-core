@@ -365,7 +365,11 @@ std::vector<Tab*> BraveTabContainer::AddTabs(
   // Session restore inserts many background tabs back-to-back; scrolling to
   // each one forces an extra full strip relayout per insert. The active tab
   // is scrolled into view on activation anyway (see SetActiveTab).
-  if (GetScrollDirection() && !IsSessionRestoreInProgress()) {
+  if (GetScrollDirection() && !layout_locked_ &&
+      !IsSessionRestoreInProgress() && !added_tabs.empty()) {
+    // TabContainer::AddTabs() may only post its AnimateToIdealBounds() pass,
+    // so the new tabs have no ideal bounds to scroll to yet.
+    UpdateIdealBounds();
     for (Tab* const tab : added_tabs) {
       ScrollTabToBeVisible(tab);
     }
