@@ -1,8 +1,8 @@
 diff --git a/chrome/common/extensions/chrome_extensions_client.cc b/chrome/common/extensions/chrome_extensions_client.cc
-index e94ba34f9a9090591ee5f466d04c5df10e294c8f..26d6f7d304dfce7d543612cb5fb8fd85fcb714fa 100644
+index f975b35dfaba1aaac504fea82f4ac8245fe8f43f..169ecfbf75aeedd16533e7f31ab4fe4e486d9a43 100644
 --- a/chrome/common/extensions/chrome_extensions_client.cc
 +++ b/chrome/common/extensions/chrome_extensions_client.cc
-@@ -61,6 +61,7 @@ const char kExtensionBlocklistHttpsUrlPrefix[] =
+@@ -73,6 +73,7 @@ network::mojom::CorsOriginPatternPtr CreateCorsOriginPattern(
  ChromeExtensionsClient::ChromeExtensionsClient() {
    AddAPIProvider(std::make_unique<CoreExtensionsAPIProvider>());
    AddAPIProvider(std::make_unique<ChromeExtensionsAPIProvider>());

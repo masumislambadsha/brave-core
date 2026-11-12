@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/download/BUILD.gn b/chrome/browser/download/BUILD.gn
-index 18950ad0a4a5229cf20db2334faf3e8d09f9e368..0462de2d591212a8b469d3df66b7709e27b14dcb 100644
+index db943d357207eff98355c2cfc551b718cd4a4dc1..ac879e018a00eacc1914fd7dd7b8bef60d828def 100644
 --- a/chrome/browser/download/BUILD.gn
 +++ b/chrome/browser/download/BUILD.gn
 @@ -378,7 +378,7 @@ source_set("impl") {

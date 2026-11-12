@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/browser_window/internal/BUILD.gn b/chrome/browser/ui/browser_window/internal/BUILD.gn
-index 4801306a04c54049eb498a83e2f49b9b3aa404bf..8d14af8279e34651b022d115f23ffd34531b2f5b 100644
+index c32f84555938e740a020e12381efd73e5f8b6cbb..c35e1fd449ca54be2ea9a564a929bc50f1574073 100644
 --- a/chrome/browser/ui/browser_window/internal/BUILD.gn
 +++ b/chrome/browser/ui/browser_window/internal/BUILD.gn
 @@ -2,6 +2,7 @@
@@ -10,7 +10,7 @@ index 4801306a04c54049eb498a83e2f49b9b3aa404bf..8d14af8279e34651b022d115f23ffd34
  import("//build/config/chrome_build.gni")
  import("//chrome/common/features.gni")
  
-@@ -24,6 +25,7 @@ source_set("internal") {
+@@ -26,6 +27,7 @@ source_set("internal") {
      "//ui/base",
      "//ui/base/unowned_user_data",
    ]

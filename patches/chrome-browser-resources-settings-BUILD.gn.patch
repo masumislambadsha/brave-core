@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/resources/settings/BUILD.gn b/chrome/browser/resources/settings/BUILD.gn
-index 5bbc68b04701220ca7e0b6041648f7ee67e6619a..03c463008dc8377b000383061f7c20b58d47ba1c 100644
+index 50e550f8f63c3e1d8c611e2dedf97052074f35e3..d5ec6b80defe70d69aedafe3d85981ed23866210 100644
 --- a/chrome/browser/resources/settings/BUILD.gn
 +++ b/chrome/browser/resources/settings/BUILD.gn
 @@ -2,6 +2,7 @@
@@ -29,7 +29,7 @@ index 5bbc68b04701220ca7e0b6041648f7ee67e6619a..03c463008dc8377b000383061f7c20b5
  
    if (enable_smart_card) {
      web_component_files += [ "site_settings/smart_card_readers_page.ts" ]
-@@ -510,6 +516,7 @@ build_webui("build") {
+@@ -513,6 +519,7 @@ build_webui("build") {
      "tooltip_mixin_lit.ts",
      "window_proxy.ts",
    ]
@@ -37,7 +37,7 @@ index 5bbc68b04701220ca7e0b6041648f7ee67e6619a..03c463008dc8377b000383061f7c20b5
  
    if (is_chromeos) {
      ts_files += [
-@@ -778,16 +785,19 @@ build_webui("build") {
+@@ -780,16 +787,19 @@ build_webui("build") {
      "site_settings/zoom_levels.css",
      "system_page/system_page.css",
    ]
@@ -57,7 +57,7 @@ index 5bbc68b04701220ca7e0b6041648f7ee67e6619a..03c463008dc8377b000383061f7c20b5
    if (!is_chromeos) {
      mojo_files_deps +=
          [ "//chrome/browser/accessibility:mojo_bindings_ts__generator" ]
-@@ -807,6 +817,7 @@ build_webui("build") {
+@@ -809,6 +819,7 @@ build_webui("build") {
      "//tools/typescript/definitions/pending.d.ts",
      "//tools/typescript/definitions/settings_private.d.ts",
    ]
@@ -65,7 +65,7 @@ index 5bbc68b04701220ca7e0b6041648f7ee67e6619a..03c463008dc8377b000383061f7c20b5
    if (is_chromeos) {
      ts_definitions +=
          [ "//tools/typescript/definitions/quick_unlock_private.d.ts" ]
-@@ -828,6 +839,7 @@ build_webui("build") {
+@@ -830,6 +841,7 @@ build_webui("build") {
      "//ui/webui/resources/js:build_ts",
      "//ui/webui/resources/mojo:build_ts",
    ]
@@ -73,7 +73,7 @@ index 5bbc68b04701220ca7e0b6041648f7ee67e6619a..03c463008dc8377b000383061f7c20b5
  
    if (!is_chromeos) {
      ts_deps +=
-@@ -864,4 +876,9 @@ build_webui("build") {
+@@ -866,4 +878,9 @@ build_webui("build") {
                "$root_gen_dir/chrome/browser/resources/settings_shared/tsc",
                root_build_dir) ]
    }

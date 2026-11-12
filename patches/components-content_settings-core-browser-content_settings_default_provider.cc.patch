@@ -1,5 +1,5 @@
 diff --git a/components/content_settings/core/browser/content_settings_default_provider.cc b/components/content_settings/core/browser/content_settings_default_provider.cc
-index 452c9c44eeb1bc1e3bdb51fe0cfce561b6ace7fb..75c1aede74f384bbb1be0946e37f0c653960d8c5 100644
+index 920f958bf5d7699521134ceb1c38b127d9a8379b..cc4e0de01aafa782965875467496ae1ebb4a0431 100644
 --- a/components/content_settings/core/browser/content_settings_default_provider.cc
 +++ b/components/content_settings/core/browser/content_settings_default_provider.cc
 @@ -391,6 +391,7 @@ void DefaultProvider::OnPreferenceChanged(const std::string& name) {

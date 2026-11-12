@@ -1,8 +1,8 @@
 diff --git a/components/component_updater/component_updater_service.cc b/components/component_updater/component_updater_service.cc
-index cfc5df6faf60774d8b8f62a2ea63dae35055220b..c1c4edcc2be904c9ebc833f6024f17fb28051867 100644
+index 38b7b04b00509b4a760f43020aaaf98eadb8db3f..5fd5c448d3b79b7915648e4aeb92838e8830144f 100644
 --- a/components/component_updater/component_updater_service.cc
 +++ b/components/component_updater/component_updater_service.cc
-@@ -602,7 +602,7 @@ std::unique_ptr<ComponentUpdateService> ComponentUpdateServiceFactory(
+@@ -738,7 +738,7 @@ std::unique_ptr<ComponentUpdateService> ComponentUpdateServiceFactory(
      bool update_checks_disabled) {
    CHECK(config);
    CHECK(scheduler);

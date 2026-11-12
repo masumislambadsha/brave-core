@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/views/frame/browser_frame_view_layout_linux.cc b/chrome/browser/ui/views/frame/browser_frame_view_layout_linux.cc
-index 62208395da94afad83c1d47c4df590bfc11b5840..f189ed6608bfa597a2691ec8434c7be86cc487a4 100644
+index e277f0af168eb7ac09001a3e9ab0fb3e92c344e1..33fed6a0da8c35e8734d370bbd0d0d50dca90f66 100644
 --- a/chrome/browser/ui/views/frame/browser_frame_view_layout_linux.cc
 +++ b/chrome/browser/ui/views/frame/browser_frame_view_layout_linux.cc
-@@ -72,5 +72,6 @@ gfx::Insets BrowserFrameViewLayoutLinux::RestoredFrameEdgeInsets() const {
+@@ -77,5 +77,6 @@ gfx::Insets BrowserFrameViewLayoutLinux::RestoredFrameEdgeInsets() const {
  }
  
  int BrowserFrameViewLayoutLinux::NonClientExtraTopThickness() const {

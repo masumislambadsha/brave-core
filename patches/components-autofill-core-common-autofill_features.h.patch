@@ -1,5 +1,5 @@
 diff --git a/components/autofill/core/common/autofill_features.h b/components/autofill/core/common/autofill_features.h
-index b8e0d71cbc458809f8cfb2cb16af9dd34da4d338..5fff2e7306e9098b3ea8725c2521f8e4f129ee2e 100644
+index fa5b232a77a01f704d884c1a4e08f57da48301df..804911a7f5b81446410dc3d37558914c773e035e 100644
 --- a/components/autofill/core/common/autofill_features.h
 +++ b/components/autofill/core/common/autofill_features.h
 @@ -110,7 +110,7 @@ COMPONENT_EXPORT(AUTOFILL)

@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/browser_commands.cc b/chrome/browser/ui/browser_commands.cc
-index 99a8ccd83b4f7da993daafa2d8776d6dc91e122a..acb65265c72411785b692785811c0b4e9e792904 100644
+index dd0114cc4814e095011e186de9534daea8398b7e..cd5573c67a85ea759ada5af185608894f27728a5 100644
 --- a/chrome/browser/ui/browser_commands.cc
 +++ b/chrome/browser/ui/browser_commands.cc
 @@ -407,7 +407,7 @@ content::WebContents* DuplicateTabAt(BrowserWindowInterface* browser,

@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/extensions/hosted_app_browsertest.cc b/chrome/browser/ui/extensions/hosted_app_browsertest.cc
-index 6068da43edc0a30d4f6e7d1c462f7698ee87977a..e4b26cc4fad1544ad80194e508ed7ac8f06f3871 100644
+index 2e80d2aeed0f14f8216b963b3ca6ca10e3f0484c..80ad82d605950f8dc3396c77813feb8c6b2bf46e 100644
 --- a/chrome/browser/ui/extensions/hosted_app_browsertest.cc
 +++ b/chrome/browser/ui/extensions/hosted_app_browsertest.cc
-@@ -1976,7 +1976,7 @@ class HostedAppJitTestBase : public HostedAppProcessModelTest {
+@@ -1974,7 +1974,7 @@ class HostedAppJitTestBase : public HostedAppProcessModelTest {
     public:
      // A custom ContentBrowserClient to selectively turn off JIT for certain
      // sites.

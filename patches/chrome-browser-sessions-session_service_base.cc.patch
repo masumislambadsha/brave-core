@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/sessions/session_service_base.cc b/chrome/browser/sessions/session_service_base.cc
-index 59f610ada3ad5ee08f0766cf05af435f2ca3b214..65005bb5f69de8d194f8ebdc832425f01f57e222 100644
+index 47394678f4dfbb71fc95192d685e65e0f78ee7f7..73bc079c44bbaacb7a73f050279dbc7eb812ef9f 100644
 --- a/chrome/browser/sessions/session_service_base.cc
 +++ b/chrome/browser/sessions/session_service_base.cc
 @@ -687,6 +687,7 @@ void SessionServiceBase::BuildCommandsForBrowser(

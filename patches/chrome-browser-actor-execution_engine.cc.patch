@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/actor/execution_engine.cc b/chrome/browser/actor/execution_engine.cc
-index f7fa4265d3b879c305a5adb49bb00e4eec5cea3d..38dcb298b7a98b6cbde58da8bf67aa3d346a85e3 100644
+index 92c3750da9423e21a510219336189ee9894e4139..158388b80e5386a57e8b8cac48e68c4090d9fe9a 100644
 --- a/chrome/browser/actor/execution_engine.cc
 +++ b/chrome/browser/actor/execution_engine.cc
 @@ -1574,6 +1574,14 @@ void ExecutionEngine::SafetyChecksForNextAction() {

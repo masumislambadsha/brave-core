@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/platform/runtime_enabled_features.json5 b/third_party/blink/renderer/platform/runtime_enabled_features.json5
-index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723f7fb7687 100644
+index 80ddbe5a1e9d0700e5feb2374a6657f85862eac8..17072fba0c2a5195786a2cdc0c65d08dcaceec0d 100644
 --- a/third_party/blink/renderer/platform/runtime_enabled_features.json5
 +++ b/third_party/blink/renderer/platform/runtime_enabled_features.json5
 @@ -185,6 +185,14 @@
@@ -102,7 +102,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        copied_from_base_feature_if: "overridden",
      },
      {
-@@ -743,6 +765,8 @@
+@@ -737,6 +759,8 @@
      {
        // Gates the returned accuracyMode parameter upon permissions.query({name: "geolocation"})
        name: "ApproximateGeolocationPermissionAccuracyMode",
@@ -111,7 +111,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        depends_on: ["ApproximateGeolocationPermission"],
      },
      {
-@@ -1455,7 +1479,7 @@
+@@ -1469,7 +1493,7 @@
        // objects that live on the compositor thread.
        // [1] https://drafts.csswg.org/css-animations-2/#timeline-triggers
        name: "CompositorTimelineTrigger",
@@ -120,7 +120,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
      },
      {
        name: "CompressionDictionaryTransport",
-@@ -1533,6 +1557,8 @@
+@@ -1547,6 +1571,8 @@
        // https://github.com/WICG/controlled-frame/blob/main/README.md for more
        // info.
        name: "ControlledFrame",
@@ -129,7 +129,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        public: true,
        status: "stable",
      },
-@@ -3008,6 +3034,8 @@
+@@ -3020,6 +3046,8 @@
      },
      {
        name: "ExtensionScriptTagging",
@@ -138,7 +138,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        public: true,
        status: "stable",
        base_feature: "ExtensionScriptTagging",
-@@ -3141,7 +3169,9 @@
+@@ -3153,7 +3181,9 @@
      },
      {
        name: "FencedFrames",
@@ -149,7 +149,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        // This helps enable and expose the <fencedframe> element, but note that
        // blink::features::kFencedFrames must be enabled as well, as we require
        // the support of the browser process to fully enable the feature.
-@@ -3237,6 +3267,7 @@
+@@ -3249,6 +3279,7 @@
      {
        // In-development features for the File System Access API.
        name: "FileSystemAccessAPIExperimental",
@@ -157,7 +157,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: "experimental",
      },
      {
-@@ -3251,6 +3282,7 @@
+@@ -3263,6 +3294,7 @@
      {
        // Non-OPFS File System Access API.
        name: "FileSystemAccessLocal",
@@ -165,7 +165,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: {"default": "stable"},
      },
      {
-@@ -4050,6 +4082,8 @@
+@@ -4057,6 +4089,8 @@
      {
        // https://chromestatus.com/feature/5152834368700416
        name: "InstallElement",
@@ -174,7 +174,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: {
          "Android": "",
          "iOS": "",
-@@ -4149,7 +4183,8 @@
+@@ -4156,7 +4190,8 @@
          "Android": "stable",
          "default": "",
        },
@@ -184,7 +184,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        copied_from_base_feature_if: "overridden",
      },
      {
-@@ -5302,6 +5337,8 @@
+@@ -5312,6 +5347,8 @@
        //
        // It also has some feature params defined throughout the codebase.
        name: "Prerender2",
@@ -193,7 +193,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: "stable",
      },
      {
-@@ -5376,6 +5413,8 @@
+@@ -5379,6 +5416,8 @@
      },
      {
        name: "ProfilerAPI",
@@ -202,7 +202,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: "stable",
      },
      {
-@@ -5518,6 +5557,8 @@
+@@ -5521,6 +5560,8 @@
      // but we still keep this flag for future phase tests.
      {
        name: "ReduceUserAgentMinorVersion",
@@ -211,7 +211,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: "stable",
      },
      {
-@@ -7110,7 +7151,8 @@
+@@ -7145,7 +7186,8 @@
          "ChromeOS": "stable",
          "default": "",
        },
@@ -221,7 +221,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        copied_from_base_feature_if: "overridden",
      },
      {
-@@ -7298,6 +7340,8 @@
+@@ -7333,6 +7375,8 @@
      },
      {
        name: "UserMediaElement",
@@ -230,7 +230,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: "stable",
        public: true,
      },
-@@ -7440,6 +7484,8 @@
+@@ -7475,6 +7519,8 @@
      {
        // https://chromestatus.com/feature/5183481574850560
        name: "WebAppInstallation",
@@ -239,7 +239,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        status: {
          "Android": "",
          "iOS": "",
-@@ -7761,6 +7807,7 @@
+@@ -7796,6 +7842,7 @@
        origin_trial_feature_name: "WebMCP",
        origin_trial_allows_third_party: true,
        public: true,
@@ -247,7 +247,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
        base_feature_status: "enabled",
        copied_from_base_feature_if: "overridden",
        // Note that `depends_on` isn't supported by origin trials.
-@@ -7770,7 +7817,7 @@
+@@ -7805,7 +7852,7 @@
          "WebMCPFormAssociatedCustomElements",
          "WebMCPWaitForToolsUntil"
        ],
@@ -256,7 +256,7 @@ index ed0c21189a78ab6165c72c63feec9c9b17f0b8c7..093cee7134153d72931768d29facc723
      },
      {
        name: "WebMCPContinuations",
-@@ -8224,5 +8271,10 @@
+@@ -8261,5 +8308,10 @@
        // crbug.com/435623334.
        name: "XSLTSpecialTrial",
      },
