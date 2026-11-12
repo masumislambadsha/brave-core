@@ -19,6 +19,8 @@
       </if>
     <if expr="_google_chrome">
       </if>
+    <if expr="is_chromeos">
+      </if>
     <if expr="is_macosx">
       </if>
 

@@ -27,27 +27,53 @@
       </message>
     </else>
   </if>
-  <if expr="not is_chromeos">
-    <message name="IDS_SETTINGS_UPGRADE_UPDATING" desc="Status label: Updating Brave">
-      Updating Brave
-    </message>
-    <message name="IDS_SETTINGS_UPGRADE_UPDATING_PERCENT" desc="Status label: Updating Brave (90%)">
-      Updating Brave (<ph name="PROGRESS_PERCENT">$1<ex>90%</ex></ph>)
-    </message>
-    <message name="IDS_SETTINGS_UPGRADE_SUCCESSFUL_RELAUNCH" desc="Status label: Successfully updated Brave">
-      Nearly up to date! Relaunch Brave to finish updating.
-    </message>
-    <message name="IDS_SETTINGS_UPGRADE_UP_TO_DATE" desc="Status label: Already up to date (Brave)">
-      Brave is up to date
-    </message>
+  <if expr="is_chromeos">
+    <then>
+      <message name="IDS_SETTINGS_UPGRADE_UPDATING" desc="Status label: Updating ChromeOS or ChromeOS">
+        Updating your device
+      </message>
+    </then>
+    <else>
+      <message name="IDS_SETTINGS_UPGRADE_UPDATING" desc="Status label: Updating Brave">
+        Updating Brave
+      </message>
+    </else>
   </if>
   <if expr="is_chromeos">
-    <message name="IDS_SETTINGS_ABOUT_OS" desc="Menu title for the About ChromeOS page.">
-      About ChromeOS
-    </message>
-    <message name="IDS_OS_SETTINGS_TAG_OS_VERSION" desc="Text for search result item which, when clicked, navigates the user to about ChromeOS settings, which gives information about the current ChromeOS version.">
-      ChromeOS version
-    </message>
+    <then>
+      <message name="IDS_SETTINGS_UPGRADE_UPDATING_PERCENT" desc="Status label: Updating ChromeOS or ChromeOS (90%)">
+        Updating your device (<ph name="PROGRESS_PERCENT">$1<ex>90%</ex></ph>)
+      </message>
+    </then>
+    <else>
+      <message name="IDS_SETTINGS_UPGRADE_UPDATING_PERCENT" desc="Status label: Updating Brave (90%)">
+        Updating Brave (<ph name="PROGRESS_PERCENT">$1<ex>90%</ex></ph>)
+      </message>
+    </else>
+  </if>
+  <if expr="is_chromeos">
+    <then>
+      <message name="IDS_SETTINGS_UPGRADE_SUCCESSFUL_RELAUNCH" desc="Status label: Successfully updated ChromeOS/ChromeOS">
+        Nearly up to date! Restart your device to finish updating.
+      </message>
+    </then>
+    <else>
+      <message name="IDS_SETTINGS_UPGRADE_SUCCESSFUL_RELAUNCH" desc="Status label: Successfully updated Brave">
+        Nearly up to date! Relaunch Brave to finish updating.
+      </message>
+    </else>
+  </if>
+  <if expr="is_chromeos">
+    <then>
+      <message name="IDS_SETTINGS_UPGRADE_UP_TO_DATE" desc="Status label: Already up to date (ChromeOS/ChromeOS)">
+        Your <ph name="DEVICE_TYPE">$1<ex>Chromebook</ex></ph> is up to date
+      </message>
+    </then>
+    <else>
+      <message name="IDS_SETTINGS_UPGRADE_UP_TO_DATE" desc="Status label: Already up to date (Brave)">
+        Brave is up to date
+      </message>
+    </else>
   </if>
 
   <!-- Autofill Page -->
@@ -237,11 +263,6 @@
   <message name="IDS_SETTINGS_PEOPLE_ACCOUNT_AWARE_SIGNIN_ACCOUNT_ROW_TITLE" desc="The title of the avatar row shown to users who are signed in only to the web">
     Your Brave
   </message>
-<if expr="is_chromeos">
-  <message name="IDS_SETTINGS_ACCOUNT_MANAGER_DESCRIPTION_V2" desc="Description of the Account Manager Settings page. Shown just below the title of the page.">
-    You can manage your signed-in Brave sync chains. Your Brave sync chains are used for Brave browser, Play Store, Gmail, and more. If you want to add an account for someone else, like a family member, add a new person to your <ph name="DEVICE_TYPE">$1<ex>Chromebook</ex></ph> instead. <ph name="LINK_BEGIN">&lt;a&gt;</ph>Learn more<ph name="LINK_END">&lt;/a&gt;</ph>
-  </message>
-</if>
   <message name="IDS_SETTINGS_SIGNIN_CHROME_SIGNIN_OPTIONS_TITLE" desc="Title of the settings that controls whether a user gets signed in to Brave when signing in to Brave Services.">
     Sign in to Brave when you sign in to other Brave services
   </message>
@@ -255,9 +276,6 @@
   <!-- Sync Page / Account Settings Page -->
   <message name="IDS_SETTINGS_SYNC_DATA_ENCRYPTED_TEXT" desc="Text alerting the user that synced data is encrypted.">
     For added security, Brave will encrypt your data.
-  </message>
-  <message name="IDS_SETTINGS_SYNC_DISCONNECT_TITLE" desc="The title of the dialog to stop syncing and sign out.">
-    Sign out of Brave?
   </message>
   <message name="IDS_SETTINGS_SUGGEST_PREF_DESC" desc="The description of the checkbox to enable/disable sending omnibox input to the user's default search engine to get additional suggestions.">
     When you type in the address bar or search box, Brave sends what you type to your default search engine to get better suggestions. This is off in Private.
@@ -380,13 +398,29 @@
   <message name="IDS_SETTINGS_SAFETY_HUB_USER_EDU_SAFE_BROWSING_SUBHEADER" desc="The header of the second item in the 'User Education Module' in the Safety Hub page. This item explains Safe Browsing.">
     <ph name="BEGIN_LINK">&lt;a href="$1" target="_blank"&gt;</ph>Brave warns you<ph name="END_LINK">&lt;/a&gt;</ph> about unsafe sites and downloads
   </message>
-  <if expr="not is_chromeos">
-    <message name="IDS_SETTINGS_SAFETY_HUB_VERSION_CARD_HEADER_RESTART" desc="Safety Hub settings page (chrome://settings/safetyHub) gives users an overview over their safety status. The version card, which this text is a part of, informs the user whether their Brave is up to date. This title of the card is shown when Brave is not up to date but there is an update available and the user needs to restart their browser to finish the update. Shown above the subtitle 'Relaunch to finish update. Your tabs will reopen'.">
-      Brave is out of date
-    </message>
-    <message name="IDS_SETTINGS_SAFETY_HUB_VERSION_CARD_HEADER_UPDATED" desc="Safety Hub settings page (chrome://settings/safetyHub) gives users an overview over their safety status. The version card, which this text is a part of, informs the user whether their Brave is up to date. This title of the card is shown when Brave is up to date and the user does not need to take any action. Shown above the subtitle that is the Brave version.">
-      Brave is up to date
-    </message>
+  <if expr="is_chromeos">
+    <then>
+      <message name="IDS_SETTINGS_SAFETY_HUB_VERSION_CARD_HEADER_RESTART" desc="Safety Hub settings page (chrome://settings/safetyHub) gives users an overview over their safety status. The version card, which this text is a part of, informs the user whether their Brave is up to date. This title of the card is shown when Brave is not up to date but there is an update available and the user needs to restart their browser to finish the update. Shown above the subtitle 'Relaunch to finish update. Your tabs will reopen'.">
+        ChromeOS is out of date
+      </message>
+    </then>
+    <else>
+      <message name="IDS_SETTINGS_SAFETY_HUB_VERSION_CARD_HEADER_RESTART" desc="Safety Hub settings page (chrome://settings/safetyHub) gives users an overview over their safety status. The version card, which this text is a part of, informs the user whether their Brave is up to date. This title of the card is shown when Brave is not up to date but there is an update available and the user needs to restart their browser to finish the update. Shown above the subtitle 'Relaunch to finish update. Your tabs will reopen'.">
+        Brave is out of date
+      </message>
+    </else>
+  </if>
+  <if expr="is_chromeos">
+    <then>
+      <message name="IDS_SETTINGS_SAFETY_HUB_VERSION_CARD_HEADER_UPDATED" desc="Safety Hub settings page (chrome://settings/safetyHub) gives users an overview over their safety status. The version card, which this text is a part of, informs the user whether their Brave is up to date. This title of the card is shown when Brave is up to date and the user does not need to take any action. Shown above the subtitle that is the Brave version.">
+        ChromeOS is up to date
+      </message>
+    </then>
+    <else>
+      <message name="IDS_SETTINGS_SAFETY_HUB_VERSION_CARD_HEADER_UPDATED" desc="Safety Hub settings page (chrome://settings/safetyHub) gives users an overview over their safety status. The version card, which this text is a part of, informs the user whether their Brave is up to date. This title of the card is shown when Brave is up to date and the user does not need to take any action. Shown above the subtitle that is the Brave version.">
+        Brave is up to date
+      </message>
+    </else>
   </if>
   <message name="IDS_SETTINGS_SAFETY_HUB_VERSION_NAVIGATION_ARIA_LABEL" desc="Safety Check settings page (chrome://settings/safetyCheck) gives users an overview over their safety status. The version card, which this text is a part of, informs the user whether their Brave is up to date. This string is for the accesibility label for the card to call out where to navigation will happen (chrome://settings/help) if the card is clicked.">
     Go to About Brave page
@@ -433,9 +467,6 @@
   <message name="IDS_SETTINGS_SKILLS_TOGGLE_LABEL" desc="Label for the toggle button on the Skills settings subpage.">
     Enable Skills in Brave
   </message>
-  <message name="IDS_SETTINGS_SYNC_SKILLS_SEPARATE_INFORMATION" desc="Info text on the Sync page explaining that skills are managed separately from sync.">
-    AI innovations like skills are saved to your Brave sync chain and managed separately from Brave sync
-  </message>
   <message name="IDS_SETTINGS_SKILLS_WHEN_ON_BULLET_TWO" desc="Second bullet point under the 'When on' column in the Skills settings page.">
     Use them alongside other Gemini features in Brave
   </message>
@@ -449,10 +480,6 @@
   </message>
   <message name="IDS_SETTINGS_DICTATION_SHORTCUT_SUBLABEL" translateable="false" desc="Sublabel for the keyboard shortcut setting in Dictation settings page.">
     Open Dictation with a keyboard shortcut
-  </message>
-  <!-- Appearance Page -->
-  <message name="IDS_SETTINGS_SIDE_PANEL_ALIGNMENT_CONTEXTUAL_TASKS_IN_CHROME" desc="Label for configuring Brave Search side panel alignment.">
-    Brave Search in Brave
   </message>
 
   <!-- On-device AI Settings Page -->
