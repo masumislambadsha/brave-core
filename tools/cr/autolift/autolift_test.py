@@ -6,6 +6,7 @@
 
 import contextlib
 from datetime import timedelta
+import functools
 import io
 import os
 from pathlib import Path
@@ -31,6 +32,13 @@ def _git_env() -> dict[str, str]:
         'GIT_CONFIG_GLOBAL': os.devnull,
         'GIT_CONFIG_NOSYSTEM': '1',
     }
+
+
+def _package(tag: str) -> str:
+    """A `package.json` pinning Chromium `tag`."""
+    return autolift.json.dumps(
+        {'config': {'projects': {'chrome': {'tag': tag}}}}
+    )
 
 
 class StripAnsiTest(unittest.TestCase):
@@ -3343,9 +3351,18 @@ class FixListingTest(unittest.TestCase):
         )
         self._git(self.dir, 'remote', 'add', 'origin', str(self.remote))
         self._commit(self.dir, 'device.yaml', 'pin\nbackport\n', 'Base')
+        self._commit(
+            self.dir, 'package.json', _package('157.0.8103.30'), 'Base version'
+        )
         self._git(self.dir, 'push', '-q', 'origin', 'main:master')
         # cr158 reverts the backport, citing the main-branch commit.
         self._git(self.dir, 'checkout', '-q', '-b', 'cr158')
+        self._commit(
+            self.dir,
+            'package.json',
+            _package('158.0.8128.3'),
+            'Update from Chromium 157.0.8103.30 to Chromium 158.0.8128.3.',
+        )
         self.fix = self._commit(
             self.dir,
             'device.yaml',
@@ -3380,6 +3397,11 @@ class FixListingTest(unittest.TestCase):
                 if no_trim
                 else self._git(path, *args)
             )
+            # What reads the branch's versions, through the fake's `run_git`.
+            for method in ('read_file', 'last_changed'):
+                getattr(fake, method).side_effect = functools.partial(
+                    getattr(autolift.repository.Repository, method), fake
+                )
             return fake
 
         stack.enter_context(
@@ -3456,6 +3478,25 @@ class FixListingTest(unittest.TestCase):
         self._commit(self.dir, 'version', 'lifted\n', 'Update from Chromium')
         self._git(self.dir, 'cherry-pick', self.fix)
         self.assertIn('(already on cr157.x)', self._listing())
+
+    def test_a_newer_branch_lists_only_its_own_fixes(self):
+        # cr158 rebased onto a master with a fix of its own, which master
+        # then rewrote: cr158's copy of it is master's, not a cr158 fix.
+        self._git(self.dir, 'checkout', '-q', '-B', 'stale', 'origin/master')
+        self._commit(
+            self.dir,
+            'master.yaml',
+            'fix\n',
+            self._fix_message('Fix it on master', _CHANGE_ID),
+        )
+        self._git(self.dir, 'rebase', '-q', 'stale', 'cr158')
+        self._git(self.dir, 'push', '-q', '-f', 'origin', 'cr158')
+        self._git(self.dir, 'push', '-q', '-f', 'origin', 'main:master')
+        self._git(self.dir, 'fetch', '-q', 'origin')
+        self._git(self.dir, 'checkout', '-q', '-B', 'cr157.x', 'origin/master')
+        listing = self._listing()
+        self.assertIn('[cr158] Revert the backport', listing)
+        self.assertNotIn('Fix it on master', listing)
 
     def test_no_fix_for_the_range(self):
         self._git(self.chromium, 'tag', '157.0.8103.40', '157.0.8103.30')

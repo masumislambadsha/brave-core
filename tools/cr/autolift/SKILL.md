@@ -135,8 +135,13 @@ commit body and in the report. Then carry on.
 - Pass the culprit as a full 40-character hash obtained from
   `git -C .. rev-parse <short>` or copied verbatim from tool output. Never type
   or complete a hash from memory. The commit hook refuses a culprit that doesn't
-  resolve, or isn't between the Chromium tags the branch's upstream and HEAD
-  pin.
+  resolve. Pass `--culprit-in-range` with it too: the hook then also refuses one
+  that isn't between the Chromium tags the branch's upstream and HEAD pin. When
+  it does, check whether the base has the cause (see [Scope](#scope)), and leave
+  it if so. A culprit from before the range that is still this branch's to fix
+  (one of its tracker's items, or an issue a base change unmasked) stands:
+  commit without `--culprit-in-range`, saying in the body why it predates the
+  range.
 - One commit per culprit. If a commit for that culprit already exists on the
   branch, add to it with `git cr commit --fixup=<sha>`, or `--fixup=amend:<sha>`
   when its message must change too (for an `amend!` message, keep the original
@@ -184,14 +189,16 @@ commit body and in the report. Then carry on.
   fixup, so the two land and revert together.
 - A plastered patch regenerated from its unchanged yaml (`plaster apply <yaml>`
   putting a stale `.patch` back as the yaml makes it), at any step of a lift or
-  an autofix run, is a `--fixup` to the latest "Apply-fixed 🩹 patches from ..."
-  commit on the branch, even when another commit wrote the stale patch, unless
-  the patch first appears after that commit (a fix picked from a newer branch
-  that adds the yaml): fix up the commit that adds it, or autosquash replays the
-  fixup before the file exists (modify/delete). Never fix up an "Update patches"
-  or "Updated strings" commit: those are regenerated, and
-  `--discard-regen-changes` drops them, fixups included. A fix that changes the
-  yaml is an ordinary culprit fix.
+  an autofix run, is committed with the subject of the latest "Apply-fixed 🩹
+  patches from ..." commit on the branch (`git commit -m '<its subject>'`),
+  which the rebase squashes into it, even when another commit wrote the stale
+  patch. The hook refuses a `fixup!`, `amend!` or `squash!` of that commit, or
+  of any pinned commit. The exception is a patch that first appears after it (a
+  fix picked from a newer branch that adds the yaml): fix up the commit that
+  adds it, or the squash moves the change before the file exists
+  (modify/delete). Never fix up an "Update patches" or "Updated strings" commit:
+  those are regenerated, and `--discard-regen-changes` drops them, fixups
+  included. A fix that changes the yaml is an ordinary culprit fix.
 - Messages follow `../agents/shared/skills/cl-description/cl-description.md`: a
   `[Component]`-style subject under 72 columns, counting the `[cr<N>]` and tag
   prefixes the hook adds, and a body wrapped at 72 that explains why. To fix a
@@ -619,7 +626,9 @@ conflicts that have a fixed answer as it goes:
   version;
 - the "Update from Chromium" commit takes its own `projects.chrome.tag` and the
   newer `PinsListTimestamp`, when that is the file's single conflicting hunk;
-- a raw patch the base changed only in its context takes the commit's version.
+- a raw patch the base changed only in its context takes the commit's version;
+- a commit the base picked with its `squash`/`fixup` lines (every file they
+  touch is the same on the base as at the branch's tip) is skipped with them.
 
 It stops on any other conflict, listing the commit and the files left. Resolve
 them with the recipes below, `git add` them, and carry on with:
@@ -655,8 +664,9 @@ finishes, Brockit lists what it resolved, by rule. Recipes for what it leaves:
   `brockit rebase --skip`; one left partly applied gets an `amend!` that rewords
   it to what remains. Before a `--skip`, check the todo
   (`$(git rev-parse --git-path rebase-merge)/git-rebase-todo`) for the skipped
-  commit's `fixup` lines next: they would fold into the commit before it. Delete
-  those whose change the base has too.
+  commit's `fixup` lines, and a pinned group's `squash` lines, next: they would
+  fold into the commit before it. Delete those whose change the base has too.
+  Brockit does all of this itself for a group the base picked whole.
 - **The "Update from Chromium" commit**, when Brockit leaves it because more
   than the version bump conflicts: in `package.json`, keep the commit's
   `projects.chrome.tag`. In
@@ -740,16 +750,17 @@ the newer branches' fix next (see
 Then fix:
 
 - **Files that cannot be patched anymore: renamed or moved.** Run
-  `git cr follow-renames <full culprit hash>`. It moves patches and yamls and
-  updates C++ includes, GN labels and Java class names (ProGuard flags
-  included), and moves Brave's Java subclasses of a class that changed package
-  along with it, but not namespaces or GN target labels that changed with the
-  move. Grep for the old package, path and symbol names in Java, C++, GN, DEPS,
-  `test/filters` and `app/feature_defaults_unittest.cc`, and fix what remains.
-  Check that the patch applied to the moved upstream file. When upstream checks
-  in Lit templates (`foo.html` becomes `foo.html.ts`), the `.lit_mangler.ts`
-  files move with them, and a patch's `<if expr>` wrappers must stay inside
-  `getHtml()`'s template literal.
+  `git cr follow-renames <full culprit hash>`. It moves patches, yamls and
+  `chromium_src` files (per-branding copies in Brave-only subdirectories
+  included), and updates C++ includes, GN labels and Java class names (ProGuard
+  flags included), and moves Brave's Java subclasses of a class that changed
+  package along with it, but not namespaces or GN target labels that changed
+  with the move. Grep for the old package, path and symbol names in Java, C++,
+  GN, DEPS, `test/filters` and `app/feature_defaults_unittest.cc`, and fix what
+  remains. Check that the patch applied to the moved upstream file. When
+  upstream checks in Lit templates (`foo.html` becomes `foo.html.ts`), the
+  `.lit_mangler.ts` files move with them, and a patch's `<if expr>` wrappers
+  must stay inside `getHtml()`'s template literal.
 - **Files that cannot be patched anymore: deleted.** Find where the code went.
   When a class is folded into its base (cr158: `TabContainerImpl` into
   `TabContainer`), the Brave subclass rebases onto the new class. Every method
@@ -789,11 +800,11 @@ After `--continue` (or the first `lift`, when nothing needed action):
 - "❌ Plaster check. Please investigate it." Run `plaster apply --all` (the one
   sanctioned unscoped use) and inspect the diff. Nothing changed: carry on
   (stale `.patchinfo` metadata is a likely cause). Unremarkable, sensible
-  changes: a `--fixup` to the "Apply-fixed 🩹 patches from ..." commit, as in
-  [Commits](#commits). Significant changes: their own commit with a culprit,
-  `--tagged=WIP` if unsure. A yaml that fails ("Unexpected number of matches")
-  is handled like "Plaster failed to fix patches" above, even when the old patch
-  still applied with fuzz.
+  changes: a commit with the "Apply-fixed 🩹 patches from ..." commit's subject,
+  as in [Commits](#commits). Significant changes: their own commit with a
+  culprit, `--tagged=WIP` if unsure. A yaml that fails ("Unexpected number of
+  matches") is handled like "Plaster failed to fix patches" above, even when the
+  old patch still applied with fuzz.
 - "❌ GNRT rerun. Please investigate it." Brockit prints no error: rerun
   `vpython3 ./tools/crates/run_gnrt.py vendor` (then `gen`) from `src/` into a
   log in `.autolift/cr<N>/`. A `[patch.crates-io]` entry in
@@ -900,7 +911,9 @@ A green build doesn't show a `chromium_src` `#define` whose target upstream
 removed: it just matches nothing. Once the build is green, run
 `vpython3 tools/cr/codehealth/scripts/define_reach.py <bump range>` (the branch
 range, in a run without a lift) and treat a token whose reach fell to 0 as a
-failure.
+failure. When it says a tag isn't in the checkout (the git cache can lack a
+base's newest tag), start from the newest older tag it has, and say so in the
+report.
 
 ### 4. Linux tests
 
@@ -919,8 +932,9 @@ that restrict unprivileged user namespaces (Ubuntu 23.10+), which upstream's
 bots don't; the harness warns when it is missing there. It applies the filters
 `pnpm run test` does (`test/filters/` and `generated/`, by suite, OS, CPU and
 sanitizer) along with upstream's for the suite: a filtered test doesn't run.
-Pass `--no-test-filters` to run it anyway, e.g. to check a filter entry is still
-needed.
+Pass `--no-test-filters` before the binary to run it anyway, e.g. to check a
+filter entry is still needed; after the binary, it goes to the test binary and
+the filters still apply.
 
 The binary is a name relative to `--build-dir` (`brave_unit_tests`,
 `brave_browser_tests`, `brave_cert_pinning_tests`, upstream `unit_tests`; tests
@@ -1128,9 +1142,7 @@ lift, `159.0.8135.1..159.0.8136.1` for a later bump). Write its dump to
 `.autolift/cr<N>/codehealth_<new tag>`, not the temp dir, so a resumed run can
 reuse it. It writes or updates `tools/cr/codehealth/M<N>.md` with what fails
 silently: overrides that stopped applying, re-enabled features, Brave copies
-that missed upstream fixes. For a branch that isn't on origin yet, "what the
-rebase already fixed" is `<base>..cr<N>` locally, not
-`origin/master..origin/cr<N>`. Follow its own instructions (subagents, static
+that missed upstream fixes. Follow its own instructions (subagents, static
 verification only), and commit what changed under `tools/cr/codehealth/` as
 `Version CodeHealth tracker`.
 

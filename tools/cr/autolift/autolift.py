@@ -140,11 +140,12 @@ import _boot  # noqa: F401  -- adds parent tools/cr to sys.path
 from ci import github as ci_github  # noqa: E402  -- after _boot
 from ci import report as ci_report  # noqa: E402  -- after _boot
 from exceptions import RebaseNeededException  # noqa: E402  -- after _boot
-import rebase as brockit_rebase  # noqa: E402  -- after _boot
+import pinned_commits  # noqa: E402  -- after _boot
 import repository  # noqa: E402  -- after _boot
 from versioning import (  # noqa: E402  -- after _boot
     Version,
     load_package_file,
+    previous_version_commit,
     read_chromium_version_file,
 )
 
@@ -1806,7 +1807,8 @@ class Publish:
             return 0
         return self._brockit('update-version-issue')
 
-    # Groups of `rebase.PINNED_GROUPS` whose commits Brockit writes itself.
+    # Groups of `pinned_commits.PINNED_GROUPS` whose commits Brockit writes
+    # itself.
     # Conflict-resolved patches aren't among them: they hold the agent's
     # resolutions.
     _BROCKIT_GROUPS = frozenset({'version', 'plaster_reruns', 'gnrt'})
@@ -1844,9 +1846,9 @@ class Publish:
 
     @classmethod
     def _written_by_brockit(cls, subject: str) -> bool:
-        return brockit_rebase.get_pinned_group_for_subject(
+        return pinned_commits.get_pinned_group_for_subject(
             subject
-        ) in cls._BROCKIT_GROUPS or brockit_rebase.is_recyclable(subject)
+        ) in cls._BROCKIT_GROUPS or pinned_commits.is_recyclable(subject)
 
     def _commits(self, revision_range: str) -> list[tuple[str, str]]:
         output = self._brave.run_git(
@@ -2610,9 +2612,9 @@ class ChannelBump:
         """Whether a lower channel picks a commit with `subject` from a
         higher one's bump."""
         return not (
-            brockit_rebase.get_pinned_group_for_subject(subject)
+            pinned_commits.get_pinned_group_for_subject(subject)
             in cls._NOT_PICKED
-            or brockit_rebase.is_recyclable(subject)
+            or pinned_commits.is_recyclable(subject)
         )
 
     def picks(self, higher: list[Channel]) -> list[tuple[str, str]]:
@@ -2645,7 +2647,7 @@ class ChannelBump:
                 # Every channel disables its own failing tests under the same
                 # subject, so only the change tells a higher one's apart.
                 by_change = (
-                    brockit_rebase.get_pinned_group_for_subject(subject)
+                    pinned_commits.get_pinned_group_for_subject(subject)
                     == 'disable_tests'
                 )
                 if by_change or subject not in have:
@@ -2819,7 +2821,7 @@ def squashes_into_branch(subject: str) -> bool:
     `IWYU fixes.`."""
     return bool(
         _AUTOSQUASH.match(subject)
-        or brockit_rebase.get_pinned_group_for_subject(subject)
+        or pinned_commits.get_pinned_group_for_subject(subject)
     )
 
 
@@ -4337,6 +4339,15 @@ class FixSources:
         """What the run has: a fix on a source past it is the source's own."""
         return 'HEAD' if self.run.channel else f'origin/{self.run.branch}'
 
+    def since_on(self, ref: str) -> str:
+        """Where `ref`'s own fixes start: `since`, or for a newer `cr<M>`
+        branch, its milestone's first bump, found as `brockit rebase` finds
+        it. Past `since`, that branch also holds copies of the run's commits
+        from before their last rewrite."""
+        if re.fullmatch(r'origin/cr\d+', ref):
+            return previous_version_commit(ref, major=True)
+        return self.since
+
     def refs(self) -> list[str]:
         refs = []
         if self.run.channel and (bump := ChannelBump.of_run(self.run)):
@@ -4419,7 +4430,9 @@ def _find_next_fixes(
 ) -> list[NextFix]:
     cherry_picks = _cherry_picks(revision_range, paths)
     sources = FixSources(run)
-    branches = {ref: _fixes_on(ref, sources.since) for ref in sources.refs()}
+    branches = {
+        ref: _fixes_on(ref, sources.since_on(ref)) for ref in sources.refs()
+    }
     return match_next_fixes(cherry_picks, branches)
 
 
@@ -4428,7 +4441,7 @@ def _cmd_next_tracker(args: argparse.Namespace) -> int:
     if run is None:
         print('Check out a cr<N> or channel bump branch first.')
         return 1
-    since = FixSources(run).since
+    sources = FixSources(run)
     cherry_picks = _cherry_picks(args.range, [], with_files=True)
     for branch in _newer_branches(run.milestone):
         major = branch.removeprefix('cr')
@@ -4460,7 +4473,8 @@ def _cmd_next_tracker(args: argparse.Namespace) -> int:
             for file, pick in match.named:
                 print(f'    names {file}: changed by {pick.sha} {pick.subject}')
             if match.ticked:
-                fixes = match.fixes(since, f'origin/{branch}')
+                ref = f'origin/{branch}'
+                fixes = match.fixes(sources.since_on(ref), ref)
                 if match.fixed_in:
                     for fix in fixes:
                         print(f'    fix on origin/{branch}: {fix}')
