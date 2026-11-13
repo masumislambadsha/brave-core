@@ -5,6 +5,13 @@
 ## why the filter is required and create an associated tracking issue if needed.
 ##
 
+# Brave doesn't ship Glic: `GlicGlobalEnabling::IsEnabledByGlobalCriteria()`
+# always fails, so Glic's keyed service and entry points never exist, and these
+# tests, which expect Glic enabled once `kGlic` is, fail or crash. The password
+# change tests drive their flow through Glic too.
+-*Glic*
+-PasswordChangeFromCheckupDelegateBrowserTest.*
+
 # References menu items by explicit index, which doesn't match our menu since we
 # insert an additional "Clear browsing data" item ahead of them.
 -RecentTabsSubMenuModelTest.MaxSessionsAndRecency
