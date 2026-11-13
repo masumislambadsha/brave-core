@@ -24,6 +24,7 @@
 class BraveAppMenuBrowserTest;
 class BraveAppMenuModelBrowserTest;
 class BraveBrowserCommandControllerTest;
+class BraveVPNPanelControllerTest;
 #endif  // !BUILDFLAG(IS_ANDROID)
 
 namespace brave_vpn {
@@ -135,6 +136,7 @@ class BraveVpnService : public mojom::ServiceHandler, public KeyedService {
   friend class ::BraveAppMenuBrowserTest;
   friend class ::BraveAppMenuModelBrowserTest;
   friend class ::BraveBrowserCommandControllerTest;
+  friend class ::BraveVPNPanelControllerTest;
 #endif  // !BUILDFLAG(IS_ANDROID)
 
 #if !BUILDFLAG(IS_ANDROID)
