@@ -11,6 +11,7 @@
 #include "base/functional/bind.h"
 #include "base/location.h"
 #include "base/path_service.h"
+#include "base/run_loop.h"
 #include "base/test/bind.h"
 #include "base/test/run_until.h"
 #include "base/test/test_future.h"
@@ -18,8 +19,11 @@
 #include "brave/browser/brave_shields/brave_shields_tab_helper.h"
 #include "brave/browser/onboarding/onboarding_tab_helper.h"
 #include "brave/browser/onboarding/pref_names.h"
+#include "brave/browser/ui/views/brave_help_bubble/shields_help_bubble_controller.h"
 #include "brave/components/brave_shields/core/common/brave_shield_constants.h"
 #include "chrome/browser/browser_process.h"
+#include "chrome/browser/ui/browser_window/public/browser_window_interface.h"
+#include "chrome/browser/ui/tabs/tab_strip_model.h"
 #include "chrome/common/chrome_constants.h"
 #include "chrome/common/chrome_paths.h"
 #include "chrome/test/base/in_process_browser_test.h"
@@ -104,6 +108,23 @@ class OnboardingBrowserTest : public InProcessBrowserTest {
         [&] { return did_stop_loading_contents_.contains(contents); }));
   }
 
+  // The highlight is the preference being set.
+  void LoadPageWithBlockedAdAndWaitForHighlight() {
+    base::test::TestFuture<void> highlight_future;
+    PrefChangeRegistrar registrar;
+    registrar.Init(g_browser_process->local_state());
+    registrar.Add(onboarding::prefs::kLastShieldsIconHighlightTime,
+                  base::BindLambdaForTesting([&] {
+                    if (!highlight_future.IsReady()) {
+                      highlight_future.SetValue();
+                    }
+                  }));
+
+    ASSERT_NO_FATAL_FAILURE(
+        LoadPageWithBlockedAd(WindowOpenDisposition::kNewForegroundTab));
+    ASSERT_TRUE(highlight_future.Wait());
+  }
+
   void OnCanHighlight(content::WebContents* contents) {
     can_highlight_contents_.insert(contents);
   }
@@ -126,23 +147,21 @@ class OnboardingBrowserTest : public InProcessBrowserTest {
 
 IN_PROC_BROWSER_TEST_F(OnboardingBrowserTest, HighlightsShieldsInActiveTab) {
   ASSERT_TRUE(GetLastHighlightTime().is_null());
-
-  // The highlight is the preference being set.
-  base::test::TestFuture<void> highlight_future;
-  PrefChangeRegistrar registrar;
-  registrar.Init(g_browser_process->local_state());
-  registrar.Add(onboarding::prefs::kLastShieldsIconHighlightTime,
-                base::BindLambdaForTesting([&] {
-                  if (!highlight_future.IsReady()) {
-                    highlight_future.SetValue();
-                  }
-                }));
-
-  ASSERT_NO_FATAL_FAILURE(
-      LoadPageWithBlockedAd(WindowOpenDisposition::kNewForegroundTab));
-
-  ASSERT_TRUE(highlight_future.Wait());
+  ASSERT_NO_FATAL_FAILURE(LoadPageWithBlockedAdAndWaitForHighlight());
   EXPECT_FALSE(GetLastHighlightTime().is_null());
+}
+
+IN_PROC_BROWSER_TEST_F(OnboardingBrowserTest,
+                       HidesHighlightWhenAnotherTabIsActivated) {
+  ASSERT_NO_FATAL_FAILURE(LoadPageWithBlockedAdAndWaitForHighlight());
+  auto& controller = *ShieldsHelpBubbleController::From(browser());
+  EXPECT_TRUE(controller.IsShowingForTesting());
+
+  // Closing the bubble is posted. Running only what is already pending keeps
+  // its 15 second auto-close timer out of the way.
+  browser()->GetTabStripModel()->ActivateTabAt(0);
+  base::RunLoop().RunUntilIdle();
+  EXPECT_FALSE(controller.IsShowingForTesting());
 }
 
 IN_PROC_BROWSER_TEST_F(OnboardingBrowserTest,
