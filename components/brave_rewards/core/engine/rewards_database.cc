@@ -233,8 +233,10 @@ mojom::DBCommandResponse::Status RewardsDatabase::Initialize(
     }
 
     initialized_ = true;
-    // The database is leaked where the browser exits without tearing down
-    // profiles (Android), so it can outlive the memory consumer registry.
+    // `kDisabled` turns off the registry's check that this registration is
+    // destroyed before the registry is. That check fails where the browser
+    // exits without tearing down profiles (Android), as this database is then
+    // leaked and outlives the registry.
     memory_consumer_registration_ =
         std::make_unique<base::AsyncMemoryConsumerRegistration>(
             "RewardsDatabase", kMemoryConsumerTraits, this,
